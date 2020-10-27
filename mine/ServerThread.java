@@ -1,7 +1,9 @@
+package mine;
 
-
-import java.util.ArrayList;
-import java.util.Random;
+import mine.NetworkLayerServer;
+import util.EndDevice;
+import util.NetworkUtility;
+import util.Packet;
 
 public class ServerThread implements Runnable {
 
@@ -46,21 +48,22 @@ public class ServerThread implements Runnable {
 
             3(a) If, while forwarding, any gateway x, found from routingTable of router r is in down state[x.state==FALSE]
                     (i) Drop packet
-                    (ii) Update the entry with distance Constants.INFTY
-                    (iii) Block NetworkLayerServer.stateChanger.t
+                    (ii) Update the entry with distance util.Constants.INFTY
+                    (iii) Block mine.NetworkLayerServer.stateChanger.t
                     (iv) Apply DVR starting from router r.
-                    (v) Resume NetworkLayerServer.stateChanger.t
+                    (v) Resume mine.NetworkLayerServer.stateChanger.t
 
             3(b) If, while forwarding, a router x receives the packet from router y,
-                    but routingTableEntry shows Constants.INFTY distance from x to y,
+                    but routingTableEntry shows util.Constants.INFTY distance from x to y,
                     (i) Update the entry with distance 1
-                    (ii) Block NetworkLayerServer.stateChanger.t
+                    (ii) Block mine.NetworkLayerServer.stateChanger.t
                     (iii) Apply DVR starting from router x.
-                    (iv) Resume NetworkLayerServer.stateChanger.t
+                    (iv) Resume mine.NetworkLayerServer.stateChanger.t
 
         4. If 3(a) occurs at any stage, packet will be dropped,
             otherwise successfully sent to the destination router
         */
+        return false;
 
     }
 

@@ -1,4 +1,6 @@
-import java.util.ArrayList;
+package mine;
+
+import util.NetworkUtility;
 
 //Work needed
 public class Client {
@@ -10,7 +12,7 @@ public class Client {
          */
         
         /*
-        1. Receive EndDevice configuration from server
+        1. Receive util.EndDevice configuration from server
         2. Receive active client list from server
         3. for(int i=0;i<100;i++)
         4. {

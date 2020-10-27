@@ -1,6 +1,8 @@
-//Work needed
+package mine;//Work needed
+import util.IPAddress;
+import util.RoutingTableEntry;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -51,7 +53,7 @@ public class Router {
     @Override
     public String toString() {
         String string = "";
-        string += "Router ID: " + routerId + "\n" + "Interfaces: \n";
+        string += "mine.Router ID: " + routerId + "\n" + "Interfaces: \n";
         for (int i = 0; i < numberOfInterfaces; i++) {
             string += interfaceAddresses.get(i).getString() + "\t";
         }
@@ -66,7 +68,7 @@ public class Router {
 
     /**
      * Initialize the distance(hop count) for each router.
-     * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFTY;
+     * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=util.Constants.INFTY;
      */
     public void initiateRoutingTable() {
 
@@ -81,15 +83,15 @@ public class Router {
     }
 
     /**
-     * Update the routing table for this router using the entries of Router neighbor
+     * Update the routing table for this router using the entries of mine.Router neighbor
      * @param neighbor
      */
     public boolean updateRoutingTable(Router neighbor) {
-        
+        return false;
     }
 
     public boolean sfupdateRoutingTable(Router neighbor) {
-        
+        return false;
     }
 
     /**
@@ -151,7 +153,7 @@ public class Router {
     public Map<Integer, IPAddress> getGatewayIDtoIP() { return gatewayIDtoIP; }
 
     public void printRoutingTable() {
-        System.out.println("Router " + routerId);
+        System.out.println("mine.Router " + routerId);
         System.out.println("DestID Distance Nexthop");
         for (RoutingTableEntry routingTableEntry : routingTable) {
             System.out.println(routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId());
@@ -159,7 +161,7 @@ public class Router {
         System.out.println("-----------------------");
     }
     public String strRoutingTable() {
-        String string = "Router" + routerId + "\n";
+        String string = "mine.Router" + routerId + "\n";
         string += "DestID Distance Nexthop\n";
         for (RoutingTableEntry routingTableEntry : routingTable) {
             string += routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId() + "\n";

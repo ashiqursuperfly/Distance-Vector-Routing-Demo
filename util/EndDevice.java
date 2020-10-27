@@ -1,6 +1,9 @@
+//Done!
+
+package util;
+
 import java.io.Serializable;
 
-//Done!
 public class EndDevice implements Serializable {
 
     private IPAddress ipAddress;

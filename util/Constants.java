@@ -1,4 +1,7 @@
 //Done!
+
+package util;
+
 public interface Constants {
 
     final int INFINITY = 10;

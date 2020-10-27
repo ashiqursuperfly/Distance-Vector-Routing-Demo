@@ -1,4 +1,8 @@
 //Done!
+package util;
+import mine.NetworkLayerServer;
+import util.Constants;
+
 import java.util.Random;
 
 public class RouterStateChanger implements Runnable {
@@ -44,7 +48,7 @@ public class RouterStateChanger implements Runnable {
         Random random = new Random(System.currentTimeMillis());
         int id = random.nextInt(NetworkLayerServer.routers.size());
         NetworkLayerServer.routers.get(id).revertState();
-        System.out.println("State Changed; Router ID: "+NetworkLayerServer.routers.get(id).getRouterId());
+        System.out.println("State Changed; mine.Router ID: "+ NetworkLayerServer.routers.get(id).getRouterId());
 
     }
 }

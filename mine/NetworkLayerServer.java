@@ -1,3 +1,10 @@
+package mine;
+
+import util.EndDevice;
+import util.IPAddress;
+import util.NetworkUtility;
+import util.RouterStateChanger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,8 +17,8 @@ import java.util.logging.Logger;
 //Work needed
 public class NetworkLayerServer {
 
+    public static ArrayList<Router> routers = new ArrayList<>();
     static int clientCount = 0;
-    static ArrayList<Router> routers = new ArrayList<>();
     static RouterStateChanger stateChanger = null;
     static Map<IPAddress,Integer> clientInterfaces = new HashMap<>(); //Each map entry represents number of client end devices connected to the interface
     static Map<IPAddress, EndDevice> endDeviceMap = new HashMap<>();
@@ -41,12 +48,12 @@ public class NetworkLayerServer {
 
         //DVR(1); //Update routing table using distance vector routing until convergence
         simpleDVR(1);
-        stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
+        stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter util.Constants.LAMBDA
 
         while(true) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("Client" + (clientCount + 1) + " attempted to connect");
+                System.out.println("mine.Client" + (clientCount + 1) + " attempted to connect");
                 EndDevice endDevice = getClientDeviceSetup();
                 clientCount++;
                 endDevices.add(endDevice);

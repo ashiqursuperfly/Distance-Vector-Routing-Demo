@@ -1,3 +1,7 @@
+package util;
+
+import util.IPAddress;
+
 import java.io.Serializable;
 
 //Done!
