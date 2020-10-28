@@ -133,12 +133,31 @@ public class Router {
 
     public void printRoutingTable() {
         System.out.println("Router " + routerId);
-        System.out.println("DestID Distance Nexthop");
+        System.out.println("DestID Distance");
         for (RoutingTableEntry routingTableEntry : routingTable) {
-            System.out.println(routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId());
+            System.out.print(routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " :::: " + routerId+"-");
+            printPath(routingTableEntry.getRouterId(), routingTableEntry);
         }
+
+
+
         System.out.println("-----------------------");
     }
+
+    public void printPath(int destId, RoutingTableEntry next) {
+
+        if (next.getGatewayRouterId() == destId) {
+            System.out.print(destId);
+            System.out.println();
+            return;
+        }
+
+        System.out.print(next.getGatewayRouterId() + "-");
+        Router nextHop = KtUtils.INSTANCE.findRouter(next.getGatewayRouterId(),NetworkLayerServer.routers);
+        printPath(destId, KtUtils.INSTANCE.searchRoutingTable(destId, nextHop.routingTable));
+
+    }
+
     public String strRoutingTable() {
         String string = "Router" + routerId + "\n";
         string += "DestID Distance Nexthop\n";
