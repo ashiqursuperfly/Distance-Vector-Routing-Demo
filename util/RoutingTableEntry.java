@@ -37,4 +37,12 @@ public class RoutingTableEntry {
         this.gatewayRouterId = gatewayRouterId;
     }
 
+    @Override
+    public String toString() {
+        return "RoutingTableEntry{" +
+                "routerId=" + routerId +
+                ", distance=" + distance +
+                ", gatewayRouterId=" + gatewayRouterId +
+                '}';
+    }
 }

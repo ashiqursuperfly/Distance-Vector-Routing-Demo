@@ -1,4 +1,4 @@
-package mine;
+package dvr;
 
 import util.EndDevice;
 import util.IPAddress;
@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class NetworkLayerServer {
 
     public static ArrayList<Router> routers = new ArrayList<>();
+
     static int clientCount = 0;
     static RouterStateChanger stateChanger = null;
     static Map<IPAddress,Integer> clientInterfaces = new HashMap<>(); //Each map entry represents number of client end devices connected to the interface
@@ -174,12 +175,12 @@ public class NetworkLayerServer {
                     interfaceAddrs.add(ipAddress);
                     interfacetoRouterID.put(ipAddress, routerId);
 
-                    /**
-                     * First interface is always client interface
-                     */
-                    if(i == 0) {
-                        //client interface is not connected to any end device yet
-                        clientInterfaces.put(ipAddress, 0);
+                    /*
+                    * First interface is always client interface
+                    */
+                    if (i == 0) {
+                       //client interface is not connected to any end device yet
+                       clientInterfaces.put(ipAddress, 0);
                     }
                     else {
                         interfaceIDtoIP.put(neighborRouters.get(i - 1), ipAddress);

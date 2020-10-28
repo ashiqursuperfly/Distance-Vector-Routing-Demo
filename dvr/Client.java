@@ -1,4 +1,4 @@
-package mine;
+package dvr;
 
 import util.NetworkUtility;
 

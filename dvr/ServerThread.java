@@ -1,6 +1,5 @@
-package mine;
+package dvr;
 
-import mine.NetworkLayerServer;
 import util.EndDevice;
 import util.NetworkUtility;
 import util.Packet;

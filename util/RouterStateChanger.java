@@ -1,7 +1,6 @@
 //Done!
 package util;
-import mine.NetworkLayerServer;
-import util.Constants;
+import dvr.NetworkLayerServer;
 
 import java.util.Random;
 
