@@ -1,9 +1,7 @@
 package dvr;
 
-import util.EndDevice;
-import util.IPAddress;
-import util.NetworkUtility;
-import util.RouterStateChanger;
+import kotlinutils.KtUtils;
+import util.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +47,7 @@ public class NetworkLayerServer {
 
         //DVR(1); //Update routing table using distance vector routing until convergence
         simpleDVR(1);
-        stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter util.Constants.LAMBDA
+        // stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter util.Constants.LAMBDA
 
         while(true) {
             try {
@@ -73,28 +71,68 @@ public class NetworkLayerServer {
     }
 
     public static synchronized void DVR(int startingRouterId) {
-        /**
-         * pseudocode
-         */
 
         /*
-        while(convergence)
-        {
-            //convergence means no change in any routingTable before and after executing the following for loop
-            for each router r <starting from the router with routerId = startingRouterId, in any order>
-            {
-                1. T <- getRoutingTable of the router r
-                2. N <- find routers which are the active neighbors of the current router r
-                3. Update routingTable of each router t in N using the
-                   routing table of r [Hint: Use t.updateRoutingTable(r)]
-            }
-        }
+        * pseudocode
         */
+
+        /*
+            while(convergence)
+            {
+                //convergence means no change in any routingTable before and after executing the following for loop
+                for each router r <starting from the router with routerId = startingRouterId, in any order>
+                {
+                    1. T <- getRoutingTable of the router r
+                    2. N <- find routers which are the active neighbors of the current router r
+                    3. Update routingTable of each router t in N using the
+                       routing table of r [Hint: Use t.updateRoutingTable(r)]
+                }
+            }
+        */
+
+
+
     }
 
     public static synchronized void simpleDVR(int startingRouterId) {
 
+        Router start = routerMap.get(startingRouterId);
 
+        boolean convergence = false;
+
+        while (!convergence) {
+
+            boolean isChanged = updateSingleRouter(start);
+
+            for (Router r : routers) {
+                // ArrayList<RoutingTableEntry> T = r.routingTable
+                if (r.routerId == startingRouterId) continue;
+
+                isChanged |= updateSingleRouter(r);
+            }
+
+            convergence = !isChanged;
+        }
+
+        System.out.println("DVR: Init Done");
+
+        for (Router r: routers) {
+            r.printRoutingTable();
+        }
+
+
+    }
+
+    private static boolean updateSingleRouter(Router r) {
+
+        boolean isChanged = false;
+
+        ArrayList<Router> activeNeighbours = KtUtils.INSTANCE.getActiveNeighbourRouters(r.neighborRouterIDs, routers);
+        for (Router t : activeNeighbours) {
+            isChanged |= t.updateRoutingTable(r);
+        }
+
+        return isChanged;
     }
 
     public static EndDevice getClientDeviceSetup() {
@@ -186,7 +224,7 @@ public class NetworkLayerServer {
                         interfaceIDtoIP.put(neighborRouters.get(i - 1), ipAddress);
                     }
                 }
-                Router router = new Router(routerId, neighborRouters, interfaceAddrs, interfaceIDtoIP);
+                Router router = new Router(routerId, neighborRouters, interfaceAddrs, interfaceIDtoIP, false);
                 routers.add(router);
                 routerMap.put(routerId, router);
             }

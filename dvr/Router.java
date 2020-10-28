@@ -1,4 +1,5 @@
 package dvr;//Work needed
+import kotlinutils.KtUtils;
 import util.Constants;
 import util.IPAddress;
 import util.RoutingTableEntry;
@@ -8,31 +9,15 @@ import java.util.Map;
 import java.util.Random;
 
 public class Router {
-    private int routerId;
-    private int numberOfInterfaces;
-    private ArrayList<IPAddress> interfaceAddresses;//list of IP address of all interfaces of the router
-    private ArrayList<RoutingTableEntry> routingTable;//used to implement DVR
-    private ArrayList<Integer> neighborRouterIDs;//Contains both "UP" and "DOWN" state routers
-    private Boolean state;//true represents "UP" state and false is for "DOWN" state
-    private Map<Integer, IPAddress> neighbourRouterIDToInterfaceIP;
+    public int routerId;
+    public int numberOfInterfaces;
+    public ArrayList<IPAddress> interfaceAddresses;//list of IP address of all interfaces of the router
+    public ArrayList<RoutingTableEntry> routingTable;//used to implement DVR
+    public ArrayList<Integer> neighborRouterIDs;//Contains both "UP" and "DOWN" state routers
+    public Boolean state;//true represents "UP" state and false is for "DOWN" state
+    public Map<Integer, IPAddress> neighbourRouterIDToInterfaceIP;
 
-    public Router() {
-        interfaceAddresses = new ArrayList<>();
-        routingTable = new ArrayList<>();
-        neighborRouterIDs = new ArrayList<>();
-
-        /*
-         * 80% Probability that the router is up
-         */
-        Random random = new Random();
-        double p = random.nextDouble();
-        if(p < 0.80) state = true;
-        else state = false;
-
-        numberOfInterfaces = 0;
-    }
-
-    public Router(int routerId, ArrayList<Integer> neighborRouters, ArrayList<IPAddress> interfaceAddresses, Map<Integer, IPAddress> neighbourRouterIDToInterfaceIP) {
+    public Router(int routerId, ArrayList<Integer> neighborRouters, ArrayList<IPAddress> interfaceAddresses, Map<Integer, IPAddress> neighbourRouterIDToInterfaceIP, boolean randomiseStates) {
         this.routerId = routerId;
         this.interfaceAddresses = interfaceAddresses;
         this.neighborRouterIDs = neighborRouters;
@@ -40,14 +25,15 @@ public class Router {
         routingTable = new ArrayList<>();
 
 
-
-        /*
-         * 80% Probability that the router is up
-         */
-        Random random = new Random();
-        double p = random.nextDouble();
-        if(p < 0.80) state = true;
-        else state = false;
+        if (randomiseStates) {
+            /* 80% Probability that the router is up */
+            Random random = new Random();
+            double p = random.nextDouble();
+            if (p < 0.80) state = true;
+            else state = false;
+        } else {
+            state = true;
+        }
 
         numberOfInterfaces = interfaceAddresses.size();
     }
@@ -55,7 +41,7 @@ public class Router {
     @Override
     public String toString() {
         String string = "";
-        string += "mine.Router ID: " + routerId + "\n" + "Interfaces: \n";
+        string += "Router ID: " + routerId + "\n" + "Interfaces: \n";
         for (int i = 0; i < numberOfInterfaces; i++) {
             string += interfaceAddresses.get(i).getString() + "\t";
         }
@@ -73,7 +59,6 @@ public class Router {
     * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=util.Constants.INFTY;
     */
     public void initiateRoutingTable() {
-        System.out.println("RouterID: "+routerId +  "(" + state + ")");
 
         for (Router other : NetworkLayerServer.routers) {
 
@@ -103,11 +88,34 @@ public class Router {
     }
 
     /**
-     * Update the routing table for this router using the entries of mine.Router neighbor
+     * Update the routing table for this router using the entries of Router neighbor
      * @param neighbor
      */
     public boolean updateRoutingTable(Router neighbor) {
-        return false;
+
+        boolean isSuccessful = false;
+
+        double thisRouterToNeighbourDistance = KtUtils.INSTANCE.searchRoutingTable(neighbor.routerId, routingTable).getDistance();
+
+        ArrayList<RoutingTableEntry> neighbourTable = neighbor.routingTable;
+
+        for (RoutingTableEntry entry: routingTable) {
+
+            if (entry.getRouterId() == routerId) continue;
+
+            double neighbourToOtherRouterDistance = KtUtils.INSTANCE.searchRoutingTable(entry.getRouterId(), neighbourTable).getDistance();
+
+            if (entry.getDistance() > thisRouterToNeighbourDistance + neighbourToOtherRouterDistance) {
+                //System.out.println(entry.getDistance() + " > " + (thisRouterToNeighbourDistance + neighbourToOtherRouterDistance));
+
+                entry.setDistance(thisRouterToNeighbourDistance + neighbourToOtherRouterDistance);
+                entry.setGatewayRouterId(neighbor.routerId);
+                isSuccessful = true;
+            }
+
+        }
+
+        return isSuccessful;
     }
 
     public boolean sfupdateRoutingTable(Router neighbor) {
@@ -123,48 +131,8 @@ public class Router {
         else { clearRoutingTable(); }
     }
 
-    public int getRouterId() {
-        return routerId;
-    }
-
-    public void setRouterId(int routerId) {
-        this.routerId = routerId;
-    }
-
-    public int getNumberOfInterfaces() {
-        return numberOfInterfaces;
-    }
-
-    public void setNumberOfInterfaces(int numberOfInterfaces) {
-        this.numberOfInterfaces = numberOfInterfaces;
-    }
-
-    public ArrayList<RoutingTableEntry> getRoutingTable() {
-        return routingTable;
-    }
-
-    public void addRoutingTableEntry(RoutingTableEntry entry) {
-        this.routingTable.add(entry);
-    }
-
-    public ArrayList<Integer> getNeighborRouterIDs() {
-        return neighborRouterIDs;
-    }
-
-    public void setNeighborRouterIDs(ArrayList<Integer> neighborRouterIDs) { this.neighborRouterIDs = neighborRouterIDs; }
-
-    public Boolean getState() {
-        return state;
-    }
-
-    public void setState(Boolean state) {
-        this.state = state;
-    }
-
-    public Map<Integer, IPAddress> getNeighbourRouterIDToInterfaceIP() { return neighbourRouterIDToInterfaceIP; }
-
     public void printRoutingTable() {
-        System.out.println("mine.Router " + routerId);
+        System.out.println("Router " + routerId);
         System.out.println("DestID Distance Nexthop");
         for (RoutingTableEntry routingTableEntry : routingTable) {
             System.out.println(routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId());
@@ -172,7 +140,7 @@ public class Router {
         System.out.println("-----------------------");
     }
     public String strRoutingTable() {
-        String string = "mine.Router" + routerId + "\n";
+        String string = "Router" + routerId + "\n";
         string += "DestID Distance Nexthop\n";
         for (RoutingTableEntry routingTableEntry : routingTable) {
             string += routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId() + "\n";
