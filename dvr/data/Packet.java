@@ -1,6 +1,4 @@
-package util;
-
-import util.IPAddress;
+package dvr.data;
 
 import java.io.Serializable;
 

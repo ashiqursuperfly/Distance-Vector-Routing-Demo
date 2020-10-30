@@ -1,8 +1,9 @@
 package dvr;
 
-import util.EndDevice;
+import dvr.data.EndDevice;
+import dvr.data.response.EndDeviceConfigResponse;
 import util.NetworkUtility;
-import util.Packet;
+import dvr.data.Packet;
 
 public class ServerThread implements Runnable {
 
@@ -12,17 +13,20 @@ public class ServerThread implements Runnable {
     ServerThread(NetworkUtility networkUtility, EndDevice endDevice) {
         this.networkUtility = networkUtility;
         this.endDevice = endDevice;
-        System.out.println("Server Ready for client " + NetworkLayerServer.clientCount);
         NetworkLayerServer.clientCount++;
+        System.out.println("Server Ready for client " + NetworkLayerServer.clientCount);
         new Thread(this).start();
     }
 
     @Override
     public void run() {
-        /**
-         * Synchronize actions with client.
-         */
-        
+        /*
+        * Synchronize actions with client.
+        */
+
+        networkUtility.write((new EndDeviceConfigResponse(endDevice)).toJson());
+        networkUtility.write(NetworkLayerServer.endDevices.toString());
+
         /*
         Tasks:
         1. Upon receiving a packet and recipient, call deliverPacket(packet)
@@ -47,13 +51,13 @@ public class ServerThread implements Runnable {
 
             3(a) If, while forwarding, any gateway x, found from routingTable of router r is in down state[x.state==FALSE]
                     (i) Drop packet
-                    (ii) Update the entry with distance util.Constants.INFTY
+                    (ii) Update the entry with distance dvr.data.Constants.INFTY
                     (iii) Block mine.NetworkLayerServer.stateChanger.t
                     (iv) Apply DVR starting from router r.
                     (v) Resume mine.NetworkLayerServer.stateChanger.t
 
             3(b) If, while forwarding, a router x receives the packet from router y,
-                    but routingTableEntry shows util.Constants.INFTY distance from x to y,
+                    but routingTableEntry shows dvr.data.Constants.INFTY distance from x to y,
                     (i) Update the entry with distance 1
                     (ii) Block mine.NetworkLayerServer.stateChanger.t
                     (iii) Apply DVR starting from router x.

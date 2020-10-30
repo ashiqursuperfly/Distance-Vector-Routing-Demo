@@ -1,0 +1,4 @@
+for i in 1 2 3 4 5
+do
+  /usr/lib/jvm/jdk-13/bin/java -javaagent:/snap/intellij-idea-ultimate/253/lib/idea_rt.jar=38807:/snap/intellij-idea-ultimate/253/bin -Dfile.encoding=UTF-8 -classpath /home/user/Workspaces/Java/intellij/DVR/out/production/DVR:/home/user/Workspaces/Java/intellij/DVR/lib/kotlin-stdlib.jar:/home/user/Workspaces/Java/intellij/DVR/lib/kotlin-reflect.jar:/home/user/Workspaces/Java/intellij/DVR/lib/kotlin-test.jar:/home/user/Workspaces/Java/intellij/DVR/lib/kotlin-stdlib-jdk7.jar:/home/user/Workspaces/Java/intellij/DVR/lib/kotlin-stdlib-jdk8.jar:/home/user/.m2/repository/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar dvr.Client
+done

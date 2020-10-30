@@ -1,8 +1,10 @@
-package kotlinutils
+package util.kotlinutils
 
+import com.google.gson.Gson
 import dvr.Router
-import util.RoutingTableEntry
+import dvr.data.RoutingTableEntry
 import java.util.*
+
 
 object KtUtils {
 
@@ -21,6 +23,16 @@ object KtUtils {
     fun findRouter(searchedRouterID: Int, routers: ArrayList<Router>): Router? {
         return routers.find {
             it.routerId == searchedRouterID
+        }
+    }
+
+    object GsonUtil {
+        fun toJson(obj: Any): String {
+            return Gson().toJson(obj)
+        }
+
+        fun<T> fromJson(jsonStr: String, any: Class<T>): T {
+            return Gson().fromJson(jsonStr, any)
         }
     }
 

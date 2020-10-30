@@ -1,12 +1,11 @@
 package dvr;//Work needed
-import kotlinutils.KtUtils;
-import util.Constants;
-import util.IPAddress;
-import util.RoutingTableEntry;
+import util.kotlinutils.KtUtils;
+import dvr.data.Constants;
+import dvr.data.IPAddress;
+import dvr.data.RoutingTableEntry;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
 
 public class Router {
     public int routerId;
@@ -65,7 +64,7 @@ public class Router {
 
     /**
     * Initialize the distance(hop count) for each router.
-    * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=util.Constants.INFTY;
+    * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=dvr.data.Constants.INFTY;
     */
     public void initiateRoutingTable() {
 

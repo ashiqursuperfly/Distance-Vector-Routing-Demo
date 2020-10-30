@@ -1,4 +1,4 @@
-package util;
+package dvr.data;
 
 import java.io.Serializable;
 

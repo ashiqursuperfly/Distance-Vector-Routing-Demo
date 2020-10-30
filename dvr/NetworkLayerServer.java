@@ -1,7 +1,9 @@
 package dvr;
 
-import kotlinutils.KtUtils;
+import util.kotlinutils.KtUtils;
 import util.*;
+import dvr.data.EndDevice;
+import dvr.data.IPAddress;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,21 +49,28 @@ public class NetworkLayerServer {
 
         //DVR(1); //Update routing table using distance vector routing until convergence
         simpleDVR(1);
-        //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter util.Constants.LAMBDA
+        //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter dvr.data.Constants.LAMBDA
 
         while(true) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("Client" + (clientCount + 1) + " attempted to connect");
-                EndDevice endDevice = getClientDeviceSetup();
-                clientCount++;
-                endDevices.add(endDevice);
-                endDeviceMap.put(endDevice.getIpAddress(),endDevice);
-                new ServerThread(new NetworkUtility(socket), endDevice);
+                System.out.println("Client" + clientCount + " attempted to connect");
+                establishEndDeviceConnection(socket);
             } catch (IOException ex) {
                 Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public static void establishEndDeviceConnection(Socket socket) {
+        EndDevice endDevice = getClientDeviceSetup();
+        endDevices.add(endDevice);
+        endDeviceMap.put(endDevice.getIpAddress(), endDevice);
+        new ServerThread(new NetworkUtility(socket), endDevice);
+    }
+
+    public static void disconnectEndDeviceConnection() {
+
     }
 
     public static void initRoutingTables() {
