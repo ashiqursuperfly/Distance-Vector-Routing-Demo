@@ -2,9 +2,11 @@ package dvr.network_layer;
 
 import dvr.model.EndDevice;
 import dvr.model.response.EndDeviceListResponse;
+import dvr.model.response.PacketResponse;
 import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import dvr.model.Packet;
+import util.kotlinutils.KtUtils;
 
 class ServerThread implements Runnable {
 
@@ -27,6 +29,13 @@ class ServerThread implements Runnable {
         networkUtility.write((new SingleEndDeviceResponse(endDevice)).toJson());
         networkUtility.write((new EndDeviceListResponse(NetworkLayerServer.endDevices)).toJson());
 
+        while (true) {
+            String s = (String) networkUtility.read();
+            if (s != null) {
+                Packet packet = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResponse.class).data;
+                System.out.println("Received Packet: " + packet.getMessage());
+            }
+        }
         /*
         Tasks:
         1. Upon receiving a packet and recipient, call deliverPacket(packet)

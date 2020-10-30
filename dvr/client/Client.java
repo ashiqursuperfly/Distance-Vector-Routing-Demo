@@ -1,12 +1,15 @@
 package dvr.client;
 
 import dvr.model.EndDevice;
+import dvr.model.Packet;
 import dvr.model.response.EndDeviceListResponse;
+import dvr.model.response.PacketResponse;
 import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import util.kotlinutils.KtUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 //Work needed
 public class Client {
@@ -32,10 +35,26 @@ public class Client {
         System.out.println("MyConfig: " + myConfig.toString());
         System.out.println("ActiveClients: " + activeClients.toString());
 
-        while (true) {
-            networkUtility.read();
-        }
+        for (int i = 0; i < 3; i++) {
 
+            Random random = new Random(System.currentTimeMillis());
+            int r = Math.abs(random.nextInt(activeClients.size()));
+
+            EndDevice randomReceiver = activeClients.get(r);
+
+            Packet message = new Packet();
+            message.setSourceIP(myConfig.getIpAddress());
+            message.setDestinationIP(randomReceiver.getIpAddress());
+            message.setMessage("Hello From " + myConfig.getDeviceID() + " to " + randomReceiver.getDeviceID());
+
+            networkUtility.write((new PacketResponse(message)).toJson());
+        }
+        while (true) {
+            String s = (String) networkUtility.read();
+            if (s != null) {
+                System.out.println(s);
+            }
+        }
 
         /*
         * Tasks

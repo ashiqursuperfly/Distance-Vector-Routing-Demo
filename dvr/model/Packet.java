@@ -11,6 +11,8 @@ public class Packet implements Serializable {
     private IPAddress sourceIP;
     int hopcount;
 
+    public Packet() { }
+
     public Packet(String message, String specialMessage, IPAddress sourceIP, IPAddress destinationIP) {
         this.message = message;
         this.specialMessage = specialMessage;
@@ -51,4 +53,12 @@ public class Packet implements Serializable {
         this.destinationIP = destinationIP;
     }
 
+    @Override
+    public String toString() {
+        return "Packet{" +
+                "message='" + message + '\'' +
+                ", destinationIP=" + destinationIP +
+                ", sourceIP=" + sourceIP +
+                '}';
+    }
 }
