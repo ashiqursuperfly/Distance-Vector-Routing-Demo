@@ -28,63 +28,6 @@ class NetworkLayerServer {
     static Map<IPAddress, Integer> interfacetoRouterID = new HashMap<>();
     static Map<Integer, Router> routerMap = new HashMap<>();
 
-    public static void main(String[] args) {
-
-        //Task: Maintain an active client list
-
-        ServerSocket serverSocket = null;
-        try {
-            serverSocket = new ServerSocket(4444);
-        } catch (IOException ex) {
-            Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        System.out.println("Server Ready: " + serverSocket.getInetAddress().getHostAddress());
-        System.out.println("Creating router topology");
-
-        readTopology();
-        printRouters();
-
-        initRoutingTables(); //Initialize routing tables for all routers
-
-        //DVR(1); //Update routing table using distance vector routing until convergence
-        simpleDVR(1);
-        //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter dvr.data.Constants.LAMBDA
-
-        while (true) {
-            try {
-                Socket socket = serverSocket.accept();
-                System.out.println("Client" + clientCount + " attempted to connect");
-                establishEndDeviceConnection(socket);
-            } catch (IOException ex) {
-                Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private static void establishEndDeviceConnection(Socket socket) {
-        EndDevice endDevice = getClientDeviceSetup();
-        if (endDevice == null) return;
-        endDevices.add(endDevice);
-        endDeviceMap.put(endDevice.getIpAddress(), endDevice);
-        new ServerThread(new NetworkUtility(socket), endDevice);
-        clientCount++;
-    }
-
-    private static void disconnectEndDeviceConnection(EndDevice toDelete) {
-        int val = clientInterfaces.get(toDelete.getDefaultGateway());
-        clientInterfaces.put(toDelete.getDefaultGateway(), --val);
-        endDeviceMap.put(toDelete.getIpAddress(), null);
-        deviceIDtoRouterID.put(toDelete.getDeviceID(), null);
-        endDevices.remove(toDelete);
-    }
-
-    private static void initRoutingTables() {
-        for (Router router : routers) {
-            router.initiateRoutingTable();
-        }
-    }
-
     static synchronized void DVR(int startingRouterId) {
 
         /*
@@ -142,6 +85,29 @@ class NetworkLayerServer {
 
     }
 
+    private static void establishEndDeviceConnection(Socket socket) {
+        EndDevice endDevice = getClientDeviceSetup();
+        if (endDevice == null) return;
+        endDevices.add(endDevice);
+        endDeviceMap.put(endDevice.getIpAddress(), endDevice);
+        new ServerThread(new NetworkUtility(socket), endDevice);
+        clientCount++;
+    }
+
+    private static void disconnectEndDeviceConnection(EndDevice toDelete) {
+        int val = clientInterfaces.get(toDelete.getDefaultGateway());
+        clientInterfaces.put(toDelete.getDefaultGateway(), --val);
+        endDeviceMap.put(toDelete.getIpAddress(), null);
+        deviceIDtoRouterID.put(toDelete.getDeviceID(), null);
+        endDevices.remove(toDelete);
+    }
+
+    private static void initRoutingTables() {
+        for (Router router : routers) {
+            router.initiateRoutingTable();
+        }
+    }
+
     private static boolean updateSingleRouter(Router r) {
 
         boolean isChanged = false;
@@ -178,21 +144,6 @@ class NetworkLayerServer {
             return null;
         }
 
-    }
-
-    public static void printRouters() {
-        for (int i = 0; i < routers.size(); i++) {
-            System.out.println("------------------\n" + routers.get(i));
-        }
-    }
-
-    public static String strrouters() {
-        String string = "";
-        for (int i = 0; i < routers.size(); i++) {
-            string += "\n------------------\n" + routers.get(i).strRoutingTable();
-        }
-        string += "\n\n";
-        return string;
     }
 
     private static void readTopology() {
@@ -246,6 +197,55 @@ class NetworkLayerServer {
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void printRouters() {
+        for (int i = 0; i < routers.size(); i++) {
+            System.out.println("------------------\n" + routers.get(i));
+        }
+    }
+
+    public static String strrouters() {
+        String string = "";
+        for (int i = 0; i < routers.size(); i++) {
+            string += "\n------------------\n" + routers.get(i).strRoutingTable();
+        }
+        string += "\n\n";
+        return string;
+    }
+
+    public static void main(String[] args) {
+
+        //Task: Maintain an active client list
+
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(4444);
+        } catch (IOException ex) {
+            Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println("Server Ready: " + serverSocket.getInetAddress().getHostAddress());
+        System.out.println("Creating router topology");
+
+        readTopology();
+        printRouters();
+
+        initRoutingTables(); //Initialize routing tables for all routers
+
+        //DVR(1); //Update routing table using distance vector routing until convergence
+        simpleDVR(1);
+        //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter dvr.data.Constants.LAMBDA
+
+        while (true) {
+            try {
+                Socket socket = serverSocket.accept();
+                System.out.println("Client" + clientCount + " attempted to connect");
+                establishEndDeviceConnection(socket);
+            } catch (IOException ex) {
+                Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

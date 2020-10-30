@@ -6,7 +6,7 @@ import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import dvr.model.Packet;
 
-public class ServerThread implements Runnable {
+class ServerThread implements Runnable {
 
     NetworkUtility networkUtility;
     EndDevice endDevice;

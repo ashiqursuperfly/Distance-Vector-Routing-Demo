@@ -4,7 +4,7 @@ import dvr.model.Constants;
 
 import java.util.Random;
 
-public class RouterStateChanger implements Runnable {
+class RouterStateChanger implements Runnable {
 
     public Thread thread = null;
     public static boolean islocked = false;
@@ -41,7 +41,7 @@ public class RouterStateChanger implements Runnable {
     }
 
     public void revertRandomRouter() {
-        /**
+        /*
          * Randomly select a router and revert its state
          */
         Random random = new Random(System.currentTimeMillis());
