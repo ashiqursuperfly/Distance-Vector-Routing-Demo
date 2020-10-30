@@ -1,22 +1,37 @@
 package dvr;
 
 import dvr.data.EndDevice;
-import dvr.data.response.EndDeviceConfigResponse;
+import dvr.data.response.EndDeviceListResponse;
+import dvr.data.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import util.kotlinutils.KtUtils;
 
+import java.util.ArrayList;
+
 //Work needed
 public class Client {
+
+    private static EndDevice myConfig;
+    private static ArrayList<EndDevice> activeClients;
+    private static final NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
+
     public static void main(String[] args) throws InterruptedException {
 
-        EndDevice myConfig;
-        NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
-        System.out.println("Connected to server");
 
-        String s = (String) networkUtility.read();
-        EndDeviceConfigResponse res = KtUtils.GsonUtil.INSTANCE.fromJson(s , EndDeviceConfigResponse.class) ;
-        myConfig = res.data;
+        System.out.println("Connected to server");
+        String response = "";
+
+        response = (String) networkUtility.read();
+        SingleEndDeviceResponse singleEndDeviceResponse = KtUtils.GsonUtil.INSTANCE.fromJson(response , SingleEndDeviceResponse.class);
+        myConfig = singleEndDeviceResponse.data;
+
+        response = (String) networkUtility.read();
+        EndDeviceListResponse endDeviceListResponse = KtUtils.GsonUtil.INSTANCE.fromJson(response , EndDeviceListResponse.class);
+        activeClients = endDeviceListResponse.data;
+
         System.out.println("MyConfig: " + myConfig.toString());
+        System.out.println("ActiveClients: " + activeClients.toString());
+
 
 
         while (true) {

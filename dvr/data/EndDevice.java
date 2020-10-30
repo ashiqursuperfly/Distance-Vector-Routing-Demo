@@ -37,7 +37,7 @@ public class EndDevice implements Serializable {
 
     @Override
     public String toString() {
-        return "\nDeviceID: " + deviceID + "\nIP: " + ipAddress + "\nDefault Gateway: " + defaultGateway;
+        return "\nDeviceID: " + deviceID + "\nIP: " + ipAddress + "\nDefault Gateway: " + defaultGateway + "\n";
     }
 
     @Override

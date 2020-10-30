@@ -1,7 +1,8 @@
 package dvr;
 
 import dvr.data.EndDevice;
-import dvr.data.response.EndDeviceConfigResponse;
+import dvr.data.response.EndDeviceListResponse;
+import dvr.data.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import dvr.data.Packet;
 
@@ -23,8 +24,8 @@ public class ServerThread implements Runnable {
         * Synchronize actions with client.
         */
 
-        networkUtility.write((new EndDeviceConfigResponse(endDevice)).toJson());
-        networkUtility.write(NetworkLayerServer.endDevices.toString());
+        networkUtility.write((new SingleEndDeviceResponse(endDevice)).toJson());
+        networkUtility.write((new EndDeviceListResponse(NetworkLayerServer.endDevices)).toJson());
 
         /*
         Tasks:
