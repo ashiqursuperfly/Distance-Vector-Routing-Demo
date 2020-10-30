@@ -47,7 +47,7 @@ public class NetworkLayerServer {
 
         //DVR(1); //Update routing table using distance vector routing until convergence
         simpleDVR(1);
-        // stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter util.Constants.LAMBDA
+        //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter util.Constants.LAMBDA
 
         while(true) {
             try {
@@ -95,6 +95,15 @@ public class NetworkLayerServer {
     }
 
     public static synchronized void simpleDVR(int startingRouterId) {
+
+        System.out.println("DVR Start");
+        for (Router r :
+                routers) {
+            if (!r.state) {
+                System.out.print(r.routerId + "" + ',');
+            }
+        }
+        System.out.println();
 
         Router start = routerMap.get(startingRouterId);
 
@@ -224,7 +233,7 @@ public class NetworkLayerServer {
                         interfaceIDtoIP.put(neighborRouters.get(i - 1), ipAddress);
                     }
                 }
-                Router router = new Router(routerId, neighborRouters, interfaceAddrs, interfaceIDtoIP, false);
+                Router router = new Router(routerId, neighborRouters, interfaceAddrs, interfaceIDtoIP, true);
                 routers.add(router);
                 routerMap.put(routerId, router);
             }

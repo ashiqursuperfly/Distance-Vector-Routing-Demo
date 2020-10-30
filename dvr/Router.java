@@ -27,10 +27,19 @@ public class Router {
 
         if (randomiseStates) {
             /* 80% Probability that the router is up */
-            Random random = new Random();
+            /* Random random = new Random();
             double p = random.nextDouble();
             if (p < 0.80) state = true;
-            else state = false;
+            else state = false;*/
+            ArrayList<Integer> selected = new ArrayList<>();
+            selected.add(6);
+            selected.add(7);
+            selected.add(11);
+
+            if (selected.contains(routerId)) state = false;
+            else state = true;
+
+
         } else {
             state = true;
         }
@@ -147,14 +156,28 @@ public class Router {
     public void printPath(int destId, RoutingTableEntry next) {
 
         if (next.getGatewayRouterId() == destId) {
-            System.out.print(destId);
+            Router dest = KtUtils.INSTANCE.findRouter(destId, NetworkLayerServer.routers);
+
+            String _t = destId + "";
+            if (!dest.state) _t += '*';
+
+            System.out.print(_t);
             System.out.println();
             return;
         }
 
+
+        if (next.getGatewayRouterId() == -1){
+            System.out.println();
+            return;
+        }
+
+        Router nextHop = KtUtils.INSTANCE.findRouter(next.getGatewayRouterId(), NetworkLayerServer.routers);
+
+
         System.out.print(next.getGatewayRouterId() + "-");
-        Router nextHop = KtUtils.INSTANCE.findRouter(next.getGatewayRouterId(),NetworkLayerServer.routers);
-        printPath(destId, KtUtils.INSTANCE.searchRoutingTable(destId, nextHop.routingTable));
+        RoutingTableEntry r = KtUtils.INSTANCE.searchRoutingTable(destId, nextHop.routingTable);
+        printPath(destId, r);
 
     }
 
