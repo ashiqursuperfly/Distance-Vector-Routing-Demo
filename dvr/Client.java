@@ -18,6 +18,7 @@ public class Client {
         myConfig = res.data;
         System.out.println("MyConfig: " + myConfig.toString());
 
+
         while (true) {
             networkUtility.read();
         }

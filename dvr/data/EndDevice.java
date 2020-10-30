@@ -9,10 +9,15 @@ public class EndDevice implements Serializable {
     private IPAddress defaultGateway;
     private int deviceID;
 
-    public EndDevice(IPAddress ipAddress, IPAddress defaultGateway, int deviceID) {
+    public EndDevice(IPAddress ipAddress, IPAddress defaultGateway, int deviceID) throws Exception {
         this.ipAddress = ipAddress;
         this.defaultGateway = defaultGateway;
         this.deviceID = deviceID;
+
+        if (!isValid(ipAddress, defaultGateway)) {
+            throw new Exception("Invalid gateway for endDevice: " + toString());
+        }
+
     }
 
     public IPAddress getIpAddress() {
@@ -22,6 +27,13 @@ public class EndDevice implements Serializable {
     public IPAddress getDefaultGateway() { return defaultGateway; }
 
     public Integer getDeviceID() { return deviceID; }
+
+    private boolean isValid(IPAddress ipAddress, IPAddress defaultGateway) {
+        for (int i=0; i < 3; i++) {
+            if (ipAddress.getBytes()[i] != defaultGateway.getBytes()[i]) return false;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
