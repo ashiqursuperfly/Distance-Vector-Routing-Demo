@@ -1,6 +1,6 @@
 //Done!
 
-package dvr.data;
+package dvr.model;
 
 public interface Constants {
 

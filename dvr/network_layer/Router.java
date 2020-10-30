@@ -1,8 +1,8 @@
-package dvr;//Work needed
+package dvr.network_layer;//Work needed
 import util.kotlinutils.KtUtils;
-import dvr.data.Constants;
-import dvr.data.IPAddress;
-import dvr.data.RoutingTableEntry;
+import dvr.model.Constants;
+import dvr.model.IPAddress;
+import dvr.model.RoutingTableEntry;
 
 import java.util.ArrayList;
 import java.util.Map;

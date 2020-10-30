@@ -1,10 +1,10 @@
-package dvr;
+package dvr.network_layer;
 
-import dvr.data.EndDevice;
-import dvr.data.response.EndDeviceListResponse;
-import dvr.data.response.SingleEndDeviceResponse;
+import dvr.model.EndDevice;
+import dvr.model.response.EndDeviceListResponse;
+import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
-import dvr.data.Packet;
+import dvr.model.Packet;
 
 public class ServerThread implements Runnable {
 

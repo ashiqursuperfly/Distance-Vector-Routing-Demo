@@ -1,6 +1,7 @@
-package dvr.data;
+package dvr.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 //Done!
 public class IPAddress implements Serializable {
@@ -31,4 +32,16 @@ public class IPAddress implements Serializable {
     @Override
     public String toString() { return string; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IPAddress)) return false;
+        IPAddress ipAddress = (IPAddress) o;
+        return Objects.equals(string, ipAddress.string);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(string);
+    }
 }

@@ -1,9 +1,9 @@
-package dvr;
+package dvr.network_layer;
 
 import util.kotlinutils.KtUtils;
 import util.*;
-import dvr.data.EndDevice;
-import dvr.data.IPAddress;
+import dvr.model.EndDevice;
+import dvr.model.IPAddress;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,13 +15,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //Work needed
-public class NetworkLayerServer {
+class NetworkLayerServer {
 
-    public static ArrayList<Router> routers = new ArrayList<>();
+    static ArrayList<Router> routers = new ArrayList<>();
 
     static int clientCount = 0;
     static RouterStateChanger stateChanger = null;
-    static Map<IPAddress,Integer> clientInterfaces = new HashMap<>(); //Each map entry represents number of client end devices connected to the interface
+    static Map<IPAddress, Integer> clientInterfaces = new HashMap<>(); //Each map entry represents number of client end devices connected to the interface
     static Map<IPAddress, EndDevice> endDeviceMap = new HashMap<>();
     static ArrayList<EndDevice> endDevices = new ArrayList<>();
     static Map<Integer, Integer> deviceIDtoRouterID = new HashMap<>();
@@ -51,7 +51,7 @@ public class NetworkLayerServer {
         simpleDVR(1);
         //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter dvr.data.Constants.LAMBDA
 
-        while(true) {
+        while (true) {
             try {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client" + clientCount + " attempted to connect");
@@ -62,7 +62,7 @@ public class NetworkLayerServer {
         }
     }
 
-    public static void establishEndDeviceConnection(Socket socket) {
+    private static void establishEndDeviceConnection(Socket socket) {
         EndDevice endDevice = getClientDeviceSetup();
         if (endDevice == null) return;
         endDevices.add(endDevice);
@@ -71,7 +71,7 @@ public class NetworkLayerServer {
         clientCount++;
     }
 
-    public static void disconnectEndDeviceConnection(EndDevice toDelete) {
+    private static void disconnectEndDeviceConnection(EndDevice toDelete) {
         int val = clientInterfaces.get(toDelete.getDefaultGateway());
         clientInterfaces.put(toDelete.getDefaultGateway(), --val);
         endDeviceMap.put(toDelete.getIpAddress(), null);
@@ -79,17 +79,17 @@ public class NetworkLayerServer {
         endDevices.remove(toDelete);
     }
 
-    public static void initRoutingTables() {
+    private static void initRoutingTables() {
         for (Router router : routers) {
             router.initiateRoutingTable();
         }
     }
 
-    public static synchronized void DVR(int startingRouterId) {
+    static synchronized void DVR(int startingRouterId) {
 
         /*
-        * pseudocode
-        */
+         * pseudocode
+         */
 
         /*
             while(convergence)
@@ -106,10 +106,9 @@ public class NetworkLayerServer {
         */
 
 
-
     }
 
-    public static synchronized void simpleDVR(int startingRouterId) {
+    static synchronized void simpleDVR(int startingRouterId) {
 
         System.out.println("DVR Start\nInitially DOWN Routers:");
         for (Router r :
@@ -136,7 +135,7 @@ public class NetworkLayerServer {
 
         System.out.println("DVR: Init Done");
 
-        for (Router r: routers) {
+        for (Router r : routers) {
             r.printRoutingTable();
         }
 
@@ -155,7 +154,7 @@ public class NetworkLayerServer {
         return isChanged;
     }
 
-    public static EndDevice getClientDeviceSetup() {
+    private static EndDevice getClientDeviceSetup() {
         Random random = new Random(System.currentTimeMillis());
         int r = Math.abs(random.nextInt(clientInterfaces.size()));
 
@@ -165,7 +164,7 @@ public class NetworkLayerServer {
         Integer numberOfClientsInGateway = entry.getValue();
         int deviceID = clientCount;
 
-        IPAddress ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (numberOfClientsInGateway+2));
+        IPAddress ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (numberOfClientsInGateway + 2));
 
         clientInterfaces.put(gateway, ++numberOfClientsInGateway);
         deviceIDtoRouterID.put(deviceID, interfacetoRouterID.get(gateway));
@@ -182,7 +181,7 @@ public class NetworkLayerServer {
     }
 
     public static void printRouters() {
-        for(int i = 0; i < routers.size(); i++) {
+        for (int i = 0; i < routers.size(); i++) {
             System.out.println("------------------\n" + routers.get(i));
         }
     }
@@ -196,18 +195,18 @@ public class NetworkLayerServer {
         return string;
     }
 
-    public static void readTopology() {
+    private static void readTopology() {
         Scanner inputFile = null;
         try {
             inputFile = new Scanner(new File("topology.txt"));
             //skip first 27 lines
             int skipLines = 27;
-            for(int i = 0; i < skipLines; i++) {
+            for (int i = 0; i < skipLines; i++) {
                 inputFile.nextLine();
             }
 
             //start reading contents
-            while(inputFile.hasNext()) {
+            while (inputFile.hasNext()) {
                 inputFile.nextLine();
                 int routerId;
                 ArrayList<Integer> neighborRouters = new ArrayList<>();
@@ -217,26 +216,25 @@ public class NetworkLayerServer {
                 routerId = inputFile.nextInt();
 
                 int count = inputFile.nextInt();
-                for(int i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++) {
                     neighborRouters.add(inputFile.nextInt());
                 }
                 count = inputFile.nextInt();
                 inputFile.nextLine();
 
-                for(int i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++) {
                     String string = inputFile.nextLine();
                     IPAddress ipAddress = new IPAddress(string);
                     interfaceAddrs.add(ipAddress);
                     interfacetoRouterID.put(ipAddress, routerId);
 
                     /*
-                    * First interface is always client interface
-                    */
+                     * First interface is always client interface
+                     */
                     if (i == 0) {
-                       //client interface is not connected to any end device yet
-                       clientInterfaces.put(ipAddress, 0);
-                    }
-                    else {
+                        //client interface is not connected to any end device yet
+                        clientInterfaces.put(ipAddress, 0);
+                    } else {
                         interfaceIDtoIP.put(neighborRouters.get(i - 1), ipAddress);
                     }
                 }

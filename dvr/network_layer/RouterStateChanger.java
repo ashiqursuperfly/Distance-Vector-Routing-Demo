@@ -1,6 +1,6 @@
-package util;
-import dvr.NetworkLayerServer;
-import dvr.data.Constants;
+package dvr.network_layer;
+import dvr.network_layer.NetworkLayerServer;
+import dvr.model.Constants;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package dvr.data;
+package dvr.model;
 
 import java.io.Serializable;
 import java.util.Objects;

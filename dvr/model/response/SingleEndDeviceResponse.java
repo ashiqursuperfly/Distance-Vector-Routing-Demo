@@ -1,6 +1,6 @@
-package dvr.data.response;
+package dvr.model.response;
 
-import dvr.data.EndDevice;
+import dvr.model.EndDevice;
 import util.kotlinutils.KtUtils;
 
 public class SingleEndDeviceResponse implements Response {

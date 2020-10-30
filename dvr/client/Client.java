@@ -1,8 +1,8 @@
-package dvr;
+package dvr.client;
 
-import dvr.data.EndDevice;
-import dvr.data.response.EndDeviceListResponse;
-import dvr.data.response.SingleEndDeviceResponse;
+import dvr.model.EndDevice;
+import dvr.model.response.EndDeviceListResponse;
+import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import util.kotlinutils.KtUtils;
 
@@ -17,7 +17,7 @@ public class Client {
 
     public static void main(String[] args) throws InterruptedException {
 
-
+        System.out.println(":::::::::::::::::::");
         System.out.println("Connected to server");
         String response = "";
 
@@ -31,8 +31,6 @@ public class Client {
 
         System.out.println("MyConfig: " + myConfig.toString());
         System.out.println("ActiveClients: " + activeClients.toString());
-
-
 
         while (true) {
             networkUtility.read();

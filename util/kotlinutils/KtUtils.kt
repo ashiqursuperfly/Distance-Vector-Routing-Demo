@@ -1,8 +1,8 @@
 package util.kotlinutils
 
 import com.google.gson.Gson
-import dvr.Router
-import dvr.data.RoutingTableEntry
+import dvr.network_layer.Router
+import dvr.model.RoutingTableEntry
 import java.util.*
 
 

@@ -1,4 +1,4 @@
-package dvr.data;
+package dvr.model;
 
 //Done!
 public class RoutingTableEntry {
