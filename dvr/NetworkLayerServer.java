@@ -69,7 +69,17 @@ public class NetworkLayerServer {
         new ServerThread(new NetworkUtility(socket), endDevice);
     }
 
-    public static void disconnectEndDeviceConnection() {
+    public static void disconnectEndDeviceConnection(EndDevice toDelete) {
+
+        int val = clientInterfaces.get(toDelete.getDefaultGateway());
+
+        clientInterfaces.put(toDelete.getDefaultGateway(), --val);
+
+        endDeviceMap.put(toDelete.getIpAddress(), null);
+
+        deviceIDtoRouterID.put(toDelete.getDeviceID(), null);
+
+        endDevices.remove(toDelete);
 
     }
 
@@ -157,27 +167,20 @@ public class NetworkLayerServer {
         Random random = new Random(System.currentTimeMillis());
         int r = Math.abs(random.nextInt(clientInterfaces.size()));
 
-        IPAddress ip = null;
-        IPAddress gateway = null;
+        Map.Entry<IPAddress, Integer> entry = (Map.Entry<IPAddress, Integer>) clientInterfaces.entrySet().toArray()[r];
 
-        int i = 0;
-        for (Map.Entry<IPAddress, Integer> entry : clientInterfaces.entrySet()) {
-            IPAddress key = entry.getKey();
-            Integer value = entry.getValue();
-            if(i == r) {
-                gateway = key;
-                ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (value+2));
-                value++;
-                clientInterfaces.put(key, value);
-                deviceIDtoRouterID.put(endDevices.size(), interfacetoRouterID.get(key));
-                break;
-            }
-            i++;
-        }
+        IPAddress gateway = entry.getKey();
+        Integer value = entry.getValue();
+        int deviceID = clientCount;
 
-        EndDevice device = new EndDevice(ip, gateway, endDevices.size());
+        IPAddress ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (value+2));
 
-        System.out.println("Device : " + ip + "::::" + gateway);
+        clientInterfaces.put(gateway, ++value);
+        deviceIDtoRouterID.put(deviceID, interfacetoRouterID.get(gateway));
+
+        EndDevice device = new EndDevice(ip, gateway, deviceID);
+
+        System.out.println(device);
         return device;
     }
 

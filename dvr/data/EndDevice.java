@@ -1,19 +1,17 @@
 package dvr.data;
 
-import util.kotlinutils.KtUtils;
-
 import java.io.Serializable;
 import java.util.Objects;
 
 public class EndDevice implements Serializable {
 
     private IPAddress ipAddress;
-    private IPAddress gateway;
+    private IPAddress defaultGateway;
     private int deviceID;
 
-    public EndDevice(IPAddress ipAddress, IPAddress gateway, int deviceID) {
+    public EndDevice(IPAddress ipAddress, IPAddress defaultGateway, int deviceID) {
         this.ipAddress = ipAddress;
-        this.gateway = gateway;
+        this.defaultGateway = defaultGateway;
         this.deviceID = deviceID;
     }
 
@@ -21,13 +19,13 @@ public class EndDevice implements Serializable {
         return ipAddress;
     }
 
-    public IPAddress getGateway() { return gateway; }
+    public IPAddress getDefaultGateway() { return defaultGateway; }
 
     public Integer getDeviceID() { return deviceID; }
 
     @Override
     public String toString() {
-        return "\nDeviceID: " + deviceID + "\nIP: " + ipAddress + "\nDefault Gateway: " + gateway;
+        return "\nDeviceID: " + deviceID + "\nIP: " + ipAddress + "\nDefault Gateway: " + defaultGateway;
     }
 
     @Override

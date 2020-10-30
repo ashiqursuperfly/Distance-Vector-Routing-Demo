@@ -13,18 +13,19 @@ public class Client {
         NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
         System.out.println("Connected to server");
 
-        /**
-         * Tasks
-         */
-
         String s = (String) networkUtility.read();
         EndDeviceConfigResponse res = KtUtils.GsonUtil.INSTANCE.fromJson(s , EndDeviceConfigResponse.class) ;
         myConfig = res.data;
         System.out.println("MyConfig: " + myConfig.toString());
 
+        while (true) {
+            networkUtility.read();
+        }
 
 
         /*
+        * Tasks
+
         1. Receive EndDevice configuration from server
         2. Receive active client list from server
         3. for(int i=0;i<100;i++)
