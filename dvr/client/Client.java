@@ -37,6 +37,8 @@ public class Client {
 
         for (int i = 0; i < 3; i++) {
 
+            if (activeClients.size() == 1) break;
+
             Random random = new Random(System.currentTimeMillis());
             int r = Math.abs(random.nextInt(activeClients.size()));
 
@@ -49,10 +51,11 @@ public class Client {
 
             networkUtility.write((new PacketResponse(message)).toJson());
         }
+
         while (true) {
             String s = (String) networkUtility.read();
             if (s != null) {
-                System.out.println(s);
+                System.out.println("Received:" + s);
             }
         }
 

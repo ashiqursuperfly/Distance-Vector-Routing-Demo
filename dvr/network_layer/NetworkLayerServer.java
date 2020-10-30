@@ -27,6 +27,7 @@ class NetworkLayerServer {
     static Map<Integer, Integer> deviceIDtoRouterID = new HashMap<>();
     static Map<IPAddress, Integer> interfacetoRouterID = new HashMap<>();
     static Map<Integer, Router> routerMap = new HashMap<>();
+    static Map<Integer, NetworkUtility> deviceIdToNetworkUtil = new HashMap<>();
 
     static synchronized void DVR(int startingRouterId) {
 
@@ -90,7 +91,9 @@ class NetworkLayerServer {
         if (endDevice == null) return;
         endDevices.add(endDevice);
         endDeviceMap.put(endDevice.getIpAddress(), endDevice);
-        new ServerThread(new NetworkUtility(socket), endDevice);
+        NetworkUtility nu = new NetworkUtility(socket);
+        deviceIdToNetworkUtil.put(endDevice.getDeviceID(), nu);
+        new ServerThread(nu, endDevice);
         clientCount++;
     }
 

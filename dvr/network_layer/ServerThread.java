@@ -34,6 +34,12 @@ class ServerThread implements Runnable {
             if (s != null) {
                 Packet packet = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResponse.class).data;
                 System.out.println("Received Packet: " + packet.getMessage());
+                NetworkUtility destNu = NetworkLayerServer.deviceIdToNetworkUtil.get(
+                    NetworkLayerServer.endDeviceMap.get(
+                        packet.getDestinationIP()
+                    ).getDeviceID()
+                );
+                destNu.write(packet.getMessage());
             }
         }
         /*
