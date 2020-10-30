@@ -52,7 +52,7 @@ public class NetworkLayerServer {
         while(true) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("mine.Client" + (clientCount + 1) + " attempted to connect");
+                System.out.println("Client" + (clientCount + 1) + " attempted to connect");
                 EndDevice endDevice = getClientDeviceSetup();
                 clientCount++;
                 endDevices.add(endDevice);
@@ -96,7 +96,7 @@ public class NetworkLayerServer {
 
     public static synchronized void simpleDVR(int startingRouterId) {
 
-        System.out.println("DVR Start");
+        System.out.println("DVR Start\nInitially DOWN Routers:");
         for (Router r :
                 routers) {
             if (!r.state) {
@@ -147,8 +147,6 @@ public class NetworkLayerServer {
     public static EndDevice getClientDeviceSetup() {
         Random random = new Random(System.currentTimeMillis());
         int r = Math.abs(random.nextInt(clientInterfaces.size()));
-
-        System.out.println("Size: " + clientInterfaces.size() + "\n" + r);
 
         IPAddress ip = null;
         IPAddress gateway = null;

@@ -182,14 +182,19 @@ public class Router {
     }
 
     public String strRoutingTable() {
-        String string = "Router" + routerId + "\n";
-        string += "DestID Distance Nexthop\n";
+        StringBuilder string = new StringBuilder("Router" + routerId + "\n");
+        string.append("DestID Distance Nexthop\n");
         for (RoutingTableEntry routingTableEntry : routingTable) {
-            string += routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId() + "\n";
+            string.append(routingTableEntry.getRouterId())
+                  .append(" ")
+                  .append(routingTableEntry.getDistance())
+                  .append(" ")
+                  .append(routingTableEntry.getGatewayRouterId())
+                  .append("\n");
         }
 
-        string += "-----------------------\n";
-        return string;
+        string.append("-----------------------\n");
+        return string.toString();
     }
 
 }
