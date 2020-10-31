@@ -37,11 +37,18 @@ public class IPAddress implements Serializable {
         if (this == o) return true;
         if (!(o instanceof IPAddress)) return false;
         IPAddress ipAddress = (IPAddress) o;
-        return Objects.equals(string, ipAddress.string);
+        return (string.equals(ipAddress.string));
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(string);
     }
+
+    public String getNetworkAddress() {
+        String [] s = string.split("\\.");
+
+        return s[0]+ "." + s[1] + "." + s[2];
+    }
+
 }

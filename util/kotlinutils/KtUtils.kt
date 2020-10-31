@@ -1,6 +1,7 @@
 package util.kotlinutils
 
 import com.google.gson.Gson
+import dvr.model.IPAddress
 import dvr.network_layer.Router
 import dvr.model.RoutingTableEntry
 import java.util.*
@@ -10,7 +11,7 @@ object KtUtils {
 
     fun searchRoutingTable(searchedRouterID: Int, routingTable: ArrayList<RoutingTableEntry>): RoutingTableEntry? {
         return routingTable.find {
-            it.routerId == searchedRouterID
+            it.destinationRouterId == searchedRouterID
         }
     }
 
@@ -23,6 +24,14 @@ object KtUtils {
     fun findRouter(searchedRouterID: Int, routers: ArrayList<Router>): Router? {
         return routers.find {
             it.routerId == searchedRouterID
+        }
+    }
+
+    fun findRouterInTheNetwork(demoIPinNetwork: IPAddress, routers: ArrayList<Router>): Router? {
+        return routers.find {
+            it.interfaceAddresses.find { it2 ->
+                it2.networkAddress == demoIPinNetwork.networkAddress
+            } != null
         }
     }
 

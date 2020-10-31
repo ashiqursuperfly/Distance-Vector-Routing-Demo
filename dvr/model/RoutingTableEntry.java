@@ -3,22 +3,22 @@ package dvr.model;
 //Done!
 public class RoutingTableEntry {
 
-    private int routerId;
+    private int destinationRouterId;
     private double distance;
     private int gatewayRouterId;
 
-    public RoutingTableEntry(int routerId, double distance, int gatewayRouterId) {
-        this.routerId = routerId;
+    public RoutingTableEntry(int destinationRouterId, double distance, int gatewayRouterId) {
+        this.destinationRouterId = destinationRouterId;
         this.distance = distance;
         this.gatewayRouterId = gatewayRouterId;
     }
 
-    public int getRouterId() {
-        return routerId;
+    public int getDestinationRouterId() {
+        return destinationRouterId;
     }
 
-    public void setRouterId(int routerId) {
-        this.routerId = routerId;
+    public void setDestinationRouterId(int destinationRouterId) {
+        this.destinationRouterId = destinationRouterId;
     }
 
     public double getDistance() {
@@ -40,7 +40,7 @@ public class RoutingTableEntry {
     @Override
     public String toString() {
         return "RoutingTableEntry{" +
-                "routerId=" + routerId +
+                "routerId=" + destinationRouterId +
                 ", distance=" + distance +
                 ", gatewayRouterId=" + gatewayRouterId +
                 '}';

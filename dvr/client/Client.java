@@ -44,6 +44,12 @@ public class Client {
 
             EndDevice randomReceiver = activeClients.get(r);
 
+            if (randomReceiver.getDeviceID() == myConfig.getDeviceID()) {
+                i--;
+                continue;
+            }
+
+
             Packet message = new Packet();
             message.setSourceIP(myConfig.getIpAddress());
             message.setDestinationIP(randomReceiver.getIpAddress());

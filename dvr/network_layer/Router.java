@@ -48,16 +48,16 @@ public class Router {
 
     @Override
     public String toString() {
-        String string = "";
-        string += "Router ID: " + routerId + "\n" + "Interfaces: \n";
+        StringBuilder string = new StringBuilder();
+        string.append("Router ID: ").append(routerId).append("\n").append("Interfaces: \n");
         for (int i = 0; i < numberOfInterfaces; i++) {
-            string += interfaceAddresses.get(i).getString() + "\t";
+            string.append(interfaceAddresses.get(i).getString()).append("\t");
         }
-        string += "\n" + "Neighbor Router IDs: \n";
+        string.append("\n" + "Neighbor Router IDs: \n");
         for (int i = 0; i < neighborRouterIDs.size(); i++) {
-            string += neighborRouterIDs.get(i) + "\t";
+            string.append(neighborRouterIDs.get(i)).append("\t");
         }
-        return string;
+        return string.toString();
     }
 
 
@@ -109,9 +109,9 @@ public class Router {
 
         for (RoutingTableEntry entry: routingTable) {
 
-            if (entry.getRouterId() == routerId) continue;
+            if (entry.getDestinationRouterId() == routerId) continue;
 
-            double neighbourToOtherRouterDistance = KtUtils.INSTANCE.searchRoutingTable(entry.getRouterId(), neighbourTable).getDistance();
+            double neighbourToOtherRouterDistance = KtUtils.INSTANCE.searchRoutingTable(entry.getDestinationRouterId(), neighbourTable).getDistance();
 
             if (entry.getDistance() > thisRouterToNeighbourDistance + neighbourToOtherRouterDistance) {
                 //System.out.println(entry.getDistance() + " > " + (thisRouterToNeighbourDistance + neighbourToOtherRouterDistance));
@@ -143,8 +143,8 @@ public class Router {
         System.out.println("Router " + routerId);
         System.out.println("DestID Distance");
         for (RoutingTableEntry routingTableEntry : routingTable) {
-            System.out.print(routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " :::: " + routerId+"-");
-            printPath(routingTableEntry.getRouterId(), routingTableEntry);
+            System.out.print(routingTableEntry.getDestinationRouterId() + " " + routingTableEntry.getDistance() + " :::: " + routerId+"-");
+            printPath(routingTableEntry.getDestinationRouterId(), routingTableEntry);
         }
 
 
@@ -152,7 +152,7 @@ public class Router {
         System.out.println("-----------------------");
     }
 
-    public void printPath(int destId, RoutingTableEntry next) {
+    private void printPath(int destId, RoutingTableEntry next) {
 
         if (next.getGatewayRouterId() == destId) {
             Router dest = KtUtils.INSTANCE.findRouter(destId, NetworkLayerServer.routers);
@@ -184,7 +184,7 @@ public class Router {
         StringBuilder string = new StringBuilder("Router" + routerId + "\n");
         string.append("DestID Distance Nexthop\n");
         for (RoutingTableEntry routingTableEntry : routingTable) {
-            string.append(routingTableEntry.getRouterId())
+            string.append(routingTableEntry.getDestinationRouterId())
                   .append(" ")
                   .append(routingTableEntry.getDistance())
                   .append(" ")
@@ -195,5 +195,8 @@ public class Router {
         string.append("-----------------------\n");
         return string.toString();
     }
+
+
+
 
 }

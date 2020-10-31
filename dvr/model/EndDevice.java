@@ -26,7 +26,7 @@ public class EndDevice implements Serializable {
 
     public IPAddress getDefaultGateway() { return defaultGateway; }
 
-    public Integer getDeviceID() { return deviceID; }
+    public int getDeviceID() { return deviceID; }
 
     private boolean isValid(IPAddress ipAddress, IPAddress defaultGateway) {
         for (int i=0; i < 3; i++) {

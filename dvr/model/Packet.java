@@ -3,13 +3,12 @@ package dvr.model;
 import java.io.Serializable;
 
 //Done!
-public class Packet implements Serializable {
+public class Packet {
 
     private String message;
     private String specialMessage;  //ex: "SHOW_ROUTE" request
     private IPAddress destinationIP;
     private IPAddress sourceIP;
-    int hopcount;
 
     public Packet() { }
 
@@ -18,7 +17,6 @@ public class Packet implements Serializable {
         this.specialMessage = specialMessage;
         this.sourceIP = sourceIP;
         this.destinationIP = destinationIP;
-        hopcount = 0;
     }
 
     public IPAddress getSourceIP() {
