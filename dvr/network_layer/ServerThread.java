@@ -45,12 +45,17 @@ class ServerThread implements Runnable {
 
         while (true) {
             String s = (String) networkUtility.read();
+
             if (s != null) {
+                if (s.equals(NetworkUtility.SESSION_END)) break;
+
                 Packet packet = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResponse.class).data;
                 System.out.println("Received Packet: " + packet.getMessage());
-                deliverPacket(packet);
+                PacketResultResponse r = deliverPacket(packet);
+                networkUtility.write(r.toJson());
             }
         }
+        System.out.println("Client with DeviceID:" + endDevice.getDeviceID() + " Left");
         /*
         Tasks:
         1. Upon receiving a packet and recipient, call deliverPacket(packet)
@@ -68,31 +73,25 @@ class ServerThread implements Runnable {
         );
     }
 
-    private Boolean deliverPacket(Packet packet) {
+    private PacketResultResponse deliverPacket(Packet packet) {
 
         Router destination = KtUtils.INSTANCE.findRouterInTheNetwork(
             packet.getDestinationIP(),
             NetworkLayerServer.routers
         );
 
-        if (destination == null) {
-            try {
-                throw new Exception("Could Not Find Destination Router for packet destination ip:" + packet.getDestinationIP());
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
         System.out.println("Source Router: " + defaultGateway.routerId + " " + defaultGateway.interfaceAddresses.get(0).getNetworkAddress());
         System.out.println("Destination Router: " + destination.routerId + " " + destination.interfaceAddresses.get(0).getNetworkAddress());
 
         latestPacketDeliveryRoute.clear();
-        PacketResultResponse result = forward(destination, defaultGateway , packet);
-        System.out.println("Packet Result:");
-        System.out.println(result);
         latestPacketDeliveryRoute.add(defaultGateway.routerId);
-        System.out.println(latestPacketDeliveryRoute);
+        PacketResultResponse result = forward(destination, defaultGateway, packet);
+        result.path = latestPacketDeliveryRoute;
+        /*System.out.println("Packet Result:");
+        System.out.println(result);
+        System.out.println(latestPacketDeliveryRoute);*/
+
+        return result;
 
         /*
         1. Find the router s which has an interface such that the interface and source end device have same network address.
@@ -119,11 +118,8 @@ class ServerThread implements Runnable {
             otherwise successfully sent to the destination router
         */
 
-
-        NetworkUtility destNu = getDestinationNetworkUtility(packet.getDestinationIP());
-        destNu.write(packet.getMessage());
-
-        return false;
+        // NetworkUtility destNu = getDestinationNetworkUtility(packet.getDestinationIP());
+        // destNu.write(packet.getMessage());
 
     }
 

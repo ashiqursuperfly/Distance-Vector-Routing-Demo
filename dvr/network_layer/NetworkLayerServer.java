@@ -54,7 +54,7 @@ class NetworkLayerServer {
 
     static synchronized void simpleDVR(int startingRouterId) {
 
-        System.out.println("DVR Start\nInitially DOWN Routers:");
+        System.out.println("SIMPLEDVR(" +startingRouterId + ") \nDOWN Routers:");
         for (Router r :
                 routers) {
             if (!r.state) {
@@ -125,7 +125,7 @@ class NetworkLayerServer {
 
     private static EndDevice getClientDeviceSetup() {
         Random random = new Random(System.currentTimeMillis());
-        int r = Math.abs(random.nextInt(clientInterfaces.size()));
+        int r = random.nextInt(clientInterfaces.size());
 
         Map.Entry<IPAddress, Integer> entry = (Map.Entry<IPAddress, Integer>) clientInterfaces.entrySet().toArray()[r];
 
@@ -134,7 +134,6 @@ class NetworkLayerServer {
         int deviceID = clientCount;
 
         IPAddress ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (numberOfClientsInGateway + 2));
-
         clientInterfaces.put(gateway, ++numberOfClientsInGateway);
         deviceIDtoRouterID.put(deviceID, interfacetoRouterID.get(gateway));
 

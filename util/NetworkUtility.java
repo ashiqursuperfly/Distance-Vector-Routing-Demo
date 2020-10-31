@@ -10,6 +10,9 @@ import java.net.SocketTimeoutException;
 
 //Done!
 public class NetworkUtility {
+
+    public static final String SESSION_END = "END-1605103-END";
+
     private Socket socket;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
@@ -56,9 +59,13 @@ public class NetworkUtility {
         } catch (SocketTimeoutException e) {
             return "Timed out haha";
         }catch (IOException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
+            closeConnection();
+            return SESSION_END;
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
+            closeConnection();
+            return SESSION_END;
         }
         return object;
     }
@@ -67,7 +74,8 @@ public class NetworkUtility {
         try {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
+            closeConnection();
         }
     }
 
@@ -76,7 +84,6 @@ public class NetworkUtility {
             objectInputStream.close();
             objectOutputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

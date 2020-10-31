@@ -10,10 +10,10 @@ import java.util.Map;
 public class Router {
     public int routerId;
     public int numberOfInterfaces;
-    public ArrayList<IPAddress> interfaceAddresses;//list of IP address of all interfaces of the router
-    public ArrayList<RoutingTableEntry> routingTable;//used to implement DVR
-    public ArrayList<Integer> neighborRouterIDs;//Contains both "UP" and "DOWN" state routers
-    public Boolean state;//true represents "UP" state and false is for "DOWN" state
+    public ArrayList<IPAddress> interfaceAddresses; //list of IP address of all interfaces of the router
+    public ArrayList<RoutingTableEntry> routingTable; //used to implement DVR
+    public ArrayList<Integer> neighborRouterIDs; //Contains both "UP" and "DOWN" state routers
+    public Boolean state; //true represents "UP" state and false is for "DOWN" state
     public Map<Integer, IPAddress> neighbourRouterIDToInterfaceIP;
 
     public Router(int routerId, ArrayList<Integer> neighborRouters, ArrayList<IPAddress> interfaceAddresses, Map<Integer, IPAddress> neighbourRouterIDToInterfaceIP, boolean randomiseStates) {
@@ -26,10 +26,12 @@ public class Router {
 
         if (randomiseStates) {
             /* 80% Probability that the router is up */
-            /* Random random = new Random();
+            /*
+            Random random = new Random();
             double p = random.nextDouble();
             if (p < 0.80) state = true;
-            else state = false;*/
+            else state = false;
+            */
             ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
             selected.add(7);
@@ -37,8 +39,6 @@ public class Router {
 
             if (selected.contains(routerId)) state = false;
             else state = true;
-
-
         } else {
             state = true;
         }

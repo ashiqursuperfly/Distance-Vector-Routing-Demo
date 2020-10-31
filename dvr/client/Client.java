@@ -4,19 +4,23 @@ import dvr.model.EndDevice;
 import dvr.model.Packet;
 import dvr.model.response.EndDeviceListResponse;
 import dvr.model.response.PacketResponse;
+import dvr.model.response.PacketResultResponse;
 import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
 import util.kotlinutils.KtUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 //Work needed
 public class Client {
 
+    private static final int TOTAL_PACKETS_TO_SEND = 100;
     private static EndDevice myConfig;
     private static ArrayList<EndDevice> activeClients;
     private static final NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
+    private static ArrayList<PacketResultResponse> packetResultResponses = new ArrayList<>();
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -25,30 +29,37 @@ public class Client {
         String response = "";
 
         response = (String) networkUtility.read();
-        SingleEndDeviceResponse singleEndDeviceResponse = KtUtils.GsonUtil.INSTANCE.fromJson(response , SingleEndDeviceResponse.class);
+        SingleEndDeviceResponse singleEndDeviceResponse = KtUtils.GsonUtil.INSTANCE.fromJson(response, SingleEndDeviceResponse.class);
         myConfig = singleEndDeviceResponse.data;
 
         response = (String) networkUtility.read();
-        EndDeviceListResponse endDeviceListResponse = KtUtils.GsonUtil.INSTANCE.fromJson(response , EndDeviceListResponse.class);
+        EndDeviceListResponse endDeviceListResponse = KtUtils.GsonUtil.INSTANCE.fromJson(response, EndDeviceListResponse.class);
         activeClients = endDeviceListResponse.data;
 
         System.out.println("MyConfig: " + myConfig.toString());
         System.out.println("ActiveClients: " + activeClients.toString());
 
-        for (int i = 0; i < 3; i++) {
+        Random random = new Random(System.currentTimeMillis());
 
-            if (activeClients.size() == 1) break;
+        for (int i = 0; i < TOTAL_PACKETS_TO_SEND ; i++) {
 
-            Random random = new Random(System.currentTimeMillis());
-            int r = Math.abs(random.nextInt(activeClients.size()));
+            if (activeClients.size() <= 3) break;
 
+            /*Scanner sc = new Scanner(System.in);
+            System.out.println("Press Y to send a random packet");
+            String input = sc.nextLine();
+            if (!input.trim().equals("Y")) {
+                i--;
+                continue;
+            }*/
+
+            int r = random.nextInt(activeClients.size());
             EndDevice randomReceiver = activeClients.get(r);
 
-            if (randomReceiver.getDeviceID() == myConfig.getDeviceID()) {
+            if (randomReceiver.getDeviceID() == myConfig.getDeviceID() || randomReceiver.getDefaultGateway().getNetworkAddress().equals(myConfig.getDefaultGateway().getNetworkAddress())) {
                 i--;
                 continue;
             }
-
 
             Packet message = new Packet();
             message.setSourceIP(myConfig.getIpAddress());
@@ -58,19 +69,28 @@ public class Client {
             networkUtility.write((new PacketResponse(message)).toJson());
         }
 
-        while (true) {
+        for (int i = 0; i < TOTAL_PACKETS_TO_SEND ; i++) {
             String s = (String) networkUtility.read();
             if (s != null) {
-                System.out.println("Received:" + s);
+                PacketResultResponse packetResultResponse = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResultResponse.class);
+                packetResultResponses.add(packetResultResponse);
             }
         }
+
+        printStats();
+
+        while (true) {
+
+        }
+
+
 
         /*
         * Tasks
 
         1. Receive EndDevice configuration from server
         2. Receive active client list from server
-        3. for(int i=0;i<100;i++)
+        3. for(int i=0; i<100; i++)
         4. {
         5.      Generate a random message
         6.      Assign a random receiver from active client list
@@ -89,5 +109,21 @@ public class Client {
         17. }
         18. Report average number of hops and drop rate
         */
+    }
+
+    private static void printStats() {
+        int totalDrops = 0;
+        int totalHops = 0;
+
+        System.out.println("Stats");
+        for (PacketResultResponse r: packetResultResponses) {
+            if (r.isSuccess) totalHops += r.path.size();
+            else totalDrops += 1;
+            System.out.println(r.packet.getSourceIP() + "-->" + r.packet.getDestinationIP());
+            System.out.println(r.path);
+        }
+        System.out.println("Avg Hops: " + (totalHops*100/TOTAL_PACKETS_TO_SEND));
+        System.out.println("Avg Drops: " + (totalDrops*100/TOTAL_PACKETS_TO_SEND));
+
     }
 }
