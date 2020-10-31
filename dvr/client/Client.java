@@ -16,7 +16,7 @@ import java.util.Scanner;
 //Work needed
 public class Client {
 
-    private static final int TOTAL_PACKETS_TO_SEND = 100;
+    private static final int TOTAL_PACKETS_TO_SEND = 3;
     private static EndDevice myConfig;
     private static ArrayList<EndDevice> activeClients;
     private static final NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
@@ -67,14 +67,14 @@ public class Client {
             message.setMessage("Hello From " + myConfig.getDeviceID() + " to " + randomReceiver.getDeviceID());
 
             networkUtility.write((new PacketResponse(message)).toJson());
-        }
+            System.out.println("Sent: " + message);
 
-        for (int i = 0; i < TOTAL_PACKETS_TO_SEND ; i++) {
             String s = (String) networkUtility.read();
-            if (s != null) {
-                PacketResultResponse packetResultResponse = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResultResponse.class);
-                packetResultResponses.add(packetResultResponse);
-            }
+            PacketResultResponse packetResultResponse = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResultResponse.class);
+            packetResultResponses.add(packetResultResponse);
+            System.out.println("Received: "+ packetResultResponse + '\n' + packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
+            System.out.println(packetResultResponse.path);
+
         }
 
         printStats();
@@ -119,11 +119,9 @@ public class Client {
         for (PacketResultResponse r: packetResultResponses) {
             if (r.isSuccess) totalHops += r.path.size();
             else totalDrops += 1;
-            System.out.println(r.packet.getSourceIP() + "-->" + r.packet.getDestinationIP());
-            System.out.println(r.path);
         }
-        System.out.println("Avg Hops: " + (totalHops*100/TOTAL_PACKETS_TO_SEND));
-        System.out.println("Avg Drops: " + (totalDrops*100/TOTAL_PACKETS_TO_SEND));
+        System.out.println("Avg Hops: " + (totalHops/(1.0 * TOTAL_PACKETS_TO_SEND)));
+        System.out.println("Avg Drops: " + (totalDrops/(1.0 *TOTAL_PACKETS_TO_SEND)));
 
     }
 }

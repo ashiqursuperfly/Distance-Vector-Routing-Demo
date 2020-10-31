@@ -6,6 +6,7 @@ import dvr.model.RoutingTableEntry;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 public class Router {
     public int routerId;
@@ -26,19 +27,17 @@ public class Router {
 
         if (randomiseStates) {
             /* 80% Probability that the router is up */
-            /*
             Random random = new Random();
             double p = random.nextDouble();
             if (p < 0.80) state = true;
             else state = false;
-            */
-            ArrayList<Integer> selected = new ArrayList<>();
+            /*ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
             selected.add(7);
             selected.add(11);
 
             if (selected.contains(routerId)) state = false;
-            else state = true;
+            else state = true;*/
         } else {
             state = true;
         }
@@ -77,7 +76,7 @@ public class Router {
                 distance = 0.0f;
                 gateWayId = routerId;
             }
-            else if (neighborRouterIDs.contains(other.routerId) && state) {
+            else if (neighborRouterIDs.contains(other.routerId) && other.state) {
                 distance = 1;
                 gateWayId = other.routerId;
             }

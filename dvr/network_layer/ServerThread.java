@@ -1,14 +1,11 @@
 package dvr.network_layer;
 
-import dvr.model.EndDevice;
-import dvr.model.IPAddress;
-import dvr.model.RoutingTableEntry;
+import dvr.model.*;
 import dvr.model.response.EndDeviceListResponse;
 import dvr.model.response.PacketResponse;
 import dvr.model.response.PacketResultResponse;
 import dvr.model.response.SingleEndDeviceResponse;
 import util.NetworkUtility;
-import dvr.model.Packet;
 import util.kotlinutils.KtUtils;
 
 import java.util.ArrayList;
@@ -128,10 +125,11 @@ class ServerThread implements Runnable {
         RoutingTableEntry nextHopRTE = KtUtils.INSTANCE.searchRoutingTable(destination.routerId, nextHop.routingTable);
 
         if (!nextHop.state || nextHopRTE == null || nextHopRTE.getGatewayRouterId() == -1) {
-            NetworkLayerServer.simpleDVR(nextHop.routerId);
-            return new PacketResultResponse(false, destination.routerId + "DOWN", packet);
-        }
+            if (nextHopRTE != null) nextHopRTE.setDistance(Constants.INFINITY);
 
+            NetworkLayerServer.simpleDVR(nextHop.routerId);
+            return new PacketResultResponse(false, "Stopped at router:" + nextHop.routerId  , packet);
+        }
         else if (nextHop.routerId == destination.routerId) {
             // latestPacketDeliveryRoute.add(nextHop.routerId);
             return new PacketResultResponse(true, "Packet Sent Successful", packet);
