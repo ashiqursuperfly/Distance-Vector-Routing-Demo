@@ -81,7 +81,7 @@ class ServerThread implements Runnable {
         System.out.println("Destination Router: " + destination.routerId + " " + destination.interfaceAddresses.get(0).getNetworkAddress());
 
         latestPacketDeliveryRoute.clear();
-        PacketResultResponse result = forward(destination, defaultGateway, packet);
+        PacketResultResponse result = forward(destination,defaultGateway, defaultGateway, packet);
         result.path = latestPacketDeliveryRoute;
         /*System.out.println("Packet Result:");
         System.out.println(result);
@@ -119,7 +119,7 @@ class ServerThread implements Runnable {
 
     }
 
-    private PacketResultResponse forward(Router destination, Router nextHop, Packet packet) {
+    private PacketResultResponse forward(Router destination, Router previous, Router nextHop, Packet packet) {
 
         // System.out.println("Forward: " +  destination.routerId + "," + nextHop.routerId);
 
@@ -136,13 +136,21 @@ class ServerThread implements Runnable {
             return new PacketResultResponse(true, "Packet Sent Successful", packet);
         }
 
-        // TODO: handle 3(b)
+        latestPacketDeliveryRoute.add(nextHop);
+
+        RoutingTableEntry prevToNext = KtUtils.INSTANCE.searchRoutingTable(nextHop.routerId, previous.routingTable);
+        if (nextHop.routerId != previous.routerId && prevToNext.getDistance() >= Constants.INFINITY) {
+            try {
+                throw new Exception("3 ER B HOI MAMA !!!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            prevToNext.setDistance(1);
+        }
 
         Router nextNextHop = KtUtils.INSTANCE.findRouter(nextHopRTE.getGatewayRouterId(), NetworkLayerServer.routers);
 
-        latestPacketDeliveryRoute.add(nextHop);
-
-        return forward(destination, nextNextHop, packet);
+        return forward(destination, nextHop, nextNextHop, packet);
 
     }
 

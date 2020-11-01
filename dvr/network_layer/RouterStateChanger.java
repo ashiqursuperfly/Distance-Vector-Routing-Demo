@@ -41,8 +41,9 @@ class RouterStateChanger implements Runnable {
          */
         Random random = new Random(System.currentTimeMillis());
         int id = random.nextInt(NetworkLayerServer.routers.size());
-        NetworkLayerServer.routers.get(id).revertState();
-        System.out.println("State Changed; Router ID: "+ NetworkLayerServer.routers.get(id).routerId);
+        Router r = NetworkLayerServer.routers.get(id);
+        r.revertState();
+        System.out.println("State Changed; Router ID: "+ NetworkLayerServer.routers.get(id).routerId + " " + r.state);
 
     }
 }
