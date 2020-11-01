@@ -54,9 +54,11 @@ class NetworkLayerServer {
 
     static synchronized void simpleDVR(int startingRouterId) {
 
-        System.out.println("SIMPLEDVR(" +startingRouterId + ") \nDOWN Routers:");
-        for (Router r :
-                routers) {
+        if (stateChanger != null) stateChanger.isStopped = true;
+        try { Thread.sleep(1000); } catch (InterruptedException e) { }
+
+        System.out.println("SIMPLEDVR(" + startingRouterId + ") \nDOWN Routers:");
+        for (Router r : routers) {
             if (!r.state) {
                 System.out.print(r.routerId + "" + ',');
             }
@@ -77,11 +79,13 @@ class NetworkLayerServer {
             convergence = !isChanged;
         }
 
-        System.out.println("DVR: Init Done");
+        System.out.println("DVR: Done");
 
         for (Router r : routers) {
             r.printRoutingTable();
         }
+
+        stateChanger = new RouterStateChanger();
 
 
     }
@@ -126,6 +130,8 @@ class NetworkLayerServer {
     private static EndDevice getClientDeviceSetup() {
         Random random = new Random(System.currentTimeMillis());
         int r = random.nextInt(clientInterfaces.size());
+
+
 
         Map.Entry<IPAddress, Integer> entry = (Map.Entry<IPAddress, Integer>) clientInterfaces.entrySet().toArray()[r];
 
@@ -238,7 +244,7 @@ class NetworkLayerServer {
 
         //DVR(1); //Update routing table using distance vector routing until convergence
         simpleDVR(1);
-        //stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter dvr.data.Constants.LAMBDA
+        // stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter dvr.data.Constants.LAMBDA
 
         while (true) {
             try {

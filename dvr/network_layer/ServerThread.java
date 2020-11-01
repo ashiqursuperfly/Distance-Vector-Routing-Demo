@@ -122,9 +122,11 @@ class ServerThread implements Runnable {
 
     private PacketResultResponse forward(Router destination, Router nextHop, Packet packet) {
 
+        // System.out.println("Forward: " +  destination.routerId + "," + nextHop.routerId);
+
         RoutingTableEntry nextHopRTE = KtUtils.INSTANCE.searchRoutingTable(destination.routerId, nextHop.routingTable);
 
-        if (!nextHop.state || nextHopRTE == null || nextHopRTE.getGatewayRouterId() == -1) {
+        if (!nextHop.state || nextHopRTE.getGatewayRouterId() == -1 || latestPacketDeliveryRoute.size() > Constants.INFINITY) {
             if (nextHopRTE != null) nextHopRTE.setDistance(Constants.INFINITY);
 
             NetworkLayerServer.simpleDVR(nextHop.routerId);

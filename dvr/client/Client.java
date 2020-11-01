@@ -16,7 +16,7 @@ import java.util.Scanner;
 //Work needed
 public class Client {
 
-    private static final int TOTAL_PACKETS_TO_SEND = 3;
+    private static final int TOTAL_PACKETS_TO_SEND = 100;
     private static EndDevice myConfig;
     private static ArrayList<EndDevice> activeClients;
     private static final NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
@@ -64,7 +64,7 @@ public class Client {
             Packet message = new Packet();
             message.setSourceIP(myConfig.getIpAddress());
             message.setDestinationIP(randomReceiver.getIpAddress());
-            message.setMessage("Hello From " + myConfig.getDeviceID() + " to " + randomReceiver.getDeviceID());
+            message.setMessage("Hello From net:" + myConfig.getIpAddress().getNetworkAddress() + " to net:" + randomReceiver.getIpAddress().getNetworkAddress());
 
             networkUtility.write((new PacketResponse(message)).toJson());
             System.out.println("Sent: " + message);
@@ -74,6 +74,9 @@ public class Client {
             packetResultResponses.add(packetResultResponse);
             System.out.println("Received: "+ packetResultResponse + '\n' + packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
             System.out.println(packetResultResponse.path);
+
+            //try { Thread.sleep(2000); } catch (InterruptedException e) { }
+
 
         }
 

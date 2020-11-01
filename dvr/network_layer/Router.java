@@ -29,7 +29,7 @@ public class Router {
             /* 80% Probability that the router is up */
             Random random = new Random();
             double p = random.nextDouble();
-            if (p < 0.80) state = true;
+            if (p < 0.90) state = true;
             else state = false;
             /*ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
@@ -110,7 +110,8 @@ public class Router {
 
             if (entry.getDestinationRouterId() == routerId) continue;
 
-            double neighbourToOtherRouterDistance = KtUtils.INSTANCE.searchRoutingTable(entry.getDestinationRouterId(), neighbourTable).getDistance();
+            RoutingTableEntry neighbourToOther = KtUtils.INSTANCE.searchRoutingTable(entry.getDestinationRouterId(), neighbourTable);
+            double neighbourToOtherRouterDistance = (neighbourToOther != null) ? neighbourToOther.getDistance() : Constants.INFINITY;
 
             if (entry.getDistance() > thisRouterToNeighbourDistance + neighbourToOtherRouterDistance) {
                 //System.out.println(entry.getDistance() + " > " + (thisRouterToNeighbourDistance + neighbourToOtherRouterDistance));
@@ -142,8 +143,8 @@ public class Router {
         System.out.println("Router " + routerId);
         System.out.println("DestID Distance");
         for (RoutingTableEntry routingTableEntry : routingTable) {
-            System.out.print(routingTableEntry.getDestinationRouterId() + " " + routingTableEntry.getDistance() + " :::: " + routerId+"-");
-            printPath(routingTableEntry.getDestinationRouterId(), routingTableEntry);
+            System.out.println(routingTableEntry.getDestinationRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId());
+            // printPath(routingTableEntry.getDestinationRouterId(), routingTableEntry);
         }
 
 
@@ -152,6 +153,12 @@ public class Router {
     }
 
     private void printPath(int destId, RoutingTableEntry next) {
+
+        if (next == null || next.getGatewayRouterId() == -1){
+            System.out.println();
+            return;
+        }
+
 
         if (next.getGatewayRouterId() == destId) {
             Router dest = KtUtils.INSTANCE.findRouter(destId, NetworkLayerServer.routers);
@@ -164,14 +171,7 @@ public class Router {
             return;
         }
 
-
-        if (next.getGatewayRouterId() == -1){
-            System.out.println();
-            return;
-        }
-
         Router nextHop = KtUtils.INSTANCE.findRouter(next.getGatewayRouterId(), NetworkLayerServer.routers);
-
 
         System.out.print(next.getGatewayRouterId() + "-");
         RoutingTableEntry r = KtUtils.INSTANCE.searchRoutingTable(destId, nextHop.routingTable);
