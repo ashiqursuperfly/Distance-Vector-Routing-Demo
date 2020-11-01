@@ -61,10 +61,15 @@ public class Client {
                 continue;
             }
 
+
             Packet message = new Packet();
             message.setSourceIP(myConfig.getIpAddress());
             message.setDestinationIP(randomReceiver.getIpAddress());
             message.setMessage("Hello From net:" + myConfig.getIpAddress().getNetworkAddress() + " to net:" + randomReceiver.getIpAddress().getNetworkAddress());
+
+            if (i == 20) {
+                message.setSpecialMessage("SHOW_ROUTE");
+            }
 
             networkUtility.write((new PacketResponse(message)).toJson());
             System.out.println("Sent: " + message);
@@ -72,9 +77,12 @@ public class Client {
             String s = (String) networkUtility.read();
             PacketResultResponse packetResultResponse = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResultResponse.class);
             packetResultResponses.add(packetResultResponse);
-            System.out.println("Received: "+ packetResultResponse + '\n' + packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
-            System.out.println(packetResultResponse.getPath());
+            System.out.println("Received: " + packetResultResponse);
 
+            if (i == 20) {
+                System.out.println(packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
+                System.out.println(packetResultResponse.getPath());
+            }
             //try { Thread.sleep(2000); } catch (InterruptedException e) { }
 
 
@@ -126,6 +134,8 @@ public class Client {
             }
             else totalDrops += 1;
         }
+        System.out.println("Total packets sent: " + TOTAL_PACKETS_TO_SEND);
+        System.out.println("Success Rate: " + (totalSuccessfulPackets*100)/ (1.0*TOTAL_PACKETS_TO_SEND));
         System.out.println("Avg Hops: " + (totalHops/(1.0 * totalSuccessfulPackets)));
         System.out.println("Avg Drops: " + (totalDrops/(1.0 *TOTAL_PACKETS_TO_SEND)));
 
