@@ -15,6 +15,12 @@ object KtUtils {
         }
     }
 
+    fun getRoutersOfState(state: Boolean, routers: ArrayList<Router>): ArrayList<Router> {
+        return ArrayList(routers.filter {
+            it.state == state
+        })
+    }
+
     fun getActiveNeighbourRouters(neighbourIds: ArrayList<Int>, routers: ArrayList<Router>): ArrayList<Router> {
         return ArrayList(routers.filter {
             neighbourIds.contains(it.routerId) && it.state
@@ -56,5 +62,16 @@ object KtUtils {
         }
     }
 
+    fun randomSleep (min:Int, bound: Int) {
+        val random = Random(System.currentTimeMillis())
+        var r = random.nextInt(bound)
+        if (r < min) {
+            r = min
+        }
+        try {
+            Thread.sleep(r.toLong())
+        } catch (e: InterruptedException) {
+        }
+    }
 
 }

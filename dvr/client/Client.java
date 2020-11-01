@@ -79,11 +79,12 @@ public class Client {
             packetResultResponses.add(packetResultResponse);
             System.out.println("Received: " + packetResultResponse);
 
-            if (i == 20) {
-                System.out.println(packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
+            if (i >= 0) { //TODO: i==20
+                // System.out.println(packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
                 System.out.println(packetResultResponse.getPath());
             }
-            //try { Thread.sleep(2000); } catch (InterruptedException e) { }
+
+            KtUtils.INSTANCE.randomSleep(1000,3000);
 
 
         }
