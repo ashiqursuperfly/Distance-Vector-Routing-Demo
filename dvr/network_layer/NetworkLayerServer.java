@@ -128,15 +128,11 @@ class NetworkLayerServer {
     }
 
     private static EndDevice getClientDeviceSetup() {
-        Random random = new Random(System.currentTimeMillis());
-        int r = random.nextInt(clientInterfaces.size());
 
+        Router r = KtUtils.INSTANCE.getRandomActiveRouter(routers);
 
-
-        Map.Entry<IPAddress, Integer> entry = (Map.Entry<IPAddress, Integer>) clientInterfaces.entrySet().toArray()[r];
-
-        IPAddress gateway = entry.getKey();
-        Integer numberOfClientsInGateway = entry.getValue();
+        IPAddress gateway = r.interfaceAddresses.get(0);
+        Integer numberOfClientsInGateway = clientInterfaces.get(gateway);
         int deviceID = clientCount;
 
         IPAddress ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (numberOfClientsInGateway + 2));

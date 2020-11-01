@@ -1,6 +1,7 @@
 package dvr.model.response;
 
 import dvr.model.Packet;
+import dvr.network_layer.Router;
 import util.kotlinutils.KtUtils;
 
 import java.util.ArrayList;
@@ -10,13 +11,13 @@ public class PacketResultResponse implements Response {
     public boolean isSuccess;
     public String message;
     public Packet packet;
-    public ArrayList<Integer> path;
+    public ArrayList<Router> path;
 
     public PacketResultResponse(boolean isSuccess, String message, Packet packet) {
         this.isSuccess = isSuccess;
         this.message = message;
         this.packet = packet;
-        path = new ArrayList<>();
+        this.path = new ArrayList<>();
     }
 
     @Override
@@ -30,5 +31,17 @@ public class PacketResultResponse implements Response {
                 "isSuccess=" + isSuccess +
                 ", message='" + message + '\'' +
                 '}';
+    }
+
+    public String getPath() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Path:");
+        for (Router r:
+             path) {
+            sb.append(r.routerId).append("-");
+        }
+
+        return sb.toString();
     }
 }

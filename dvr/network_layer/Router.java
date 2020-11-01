@@ -27,10 +27,10 @@ public class Router {
 
         if (randomiseStates) {
             /* 80% Probability that the router is up */
-            Random random = new Random();
+            Random random = new Random(System.currentTimeMillis());
             double p = random.nextDouble();
-            if (p < 0.90) state = true;
-            else state = false;
+            if (p > Constants.initialDownRouterChance) state = false;
+            else state = true;
             /*ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
             selected.add(7);

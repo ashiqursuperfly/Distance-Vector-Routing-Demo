@@ -2,8 +2,8 @@ package util.kotlinutils
 
 import com.google.gson.Gson
 import dvr.model.IPAddress
-import dvr.network_layer.Router
 import dvr.model.RoutingTableEntry
+import dvr.network_layer.Router
 import java.util.*
 
 
@@ -19,6 +19,17 @@ object KtUtils {
         return ArrayList(routers.filter {
             neighbourIds.contains(it.routerId) && it.state
         })
+    }
+
+    fun getRandomActiveRouter(routers: ArrayList<Router>): Router {
+        val v = ArrayList(routers.filter {
+            it.state
+        })
+
+        val random = Random(System.currentTimeMillis())
+        val r = random.nextInt(v.size)
+
+        return v[r]
     }
 
     fun findRouter(searchedRouterID: Int, routers: ArrayList<Router>): Router? {
@@ -40,7 +51,7 @@ object KtUtils {
             return Gson().toJson(obj)
         }
 
-        fun<T> fromJson(jsonStr: String, any: Class<T>): T {
+        fun <T> fromJson(jsonStr: String, any: Class<T>): T {
             return Gson().fromJson(jsonStr, any)
         }
     }

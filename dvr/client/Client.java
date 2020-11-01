@@ -73,7 +73,7 @@ public class Client {
             PacketResultResponse packetResultResponse = KtUtils.GsonUtil.INSTANCE.fromJson(s, PacketResultResponse.class);
             packetResultResponses.add(packetResultResponse);
             System.out.println("Received: "+ packetResultResponse + '\n' + packetResultResponse.packet.getSourceIP() + "-->" + packetResultResponse.packet.getDestinationIP());
-            System.out.println(packetResultResponse.path);
+            System.out.println(packetResultResponse.getPath());
 
             //try { Thread.sleep(2000); } catch (InterruptedException e) { }
 
@@ -117,13 +117,16 @@ public class Client {
     private static void printStats() {
         int totalDrops = 0;
         int totalHops = 0;
-
+        int totalSuccessfulPackets = 1;
         System.out.println("Stats");
         for (PacketResultResponse r: packetResultResponses) {
-            if (r.isSuccess) totalHops += r.path.size();
+            if (r.isSuccess) {
+                totalSuccessfulPackets++;
+                totalHops += r.path.size();
+            }
             else totalDrops += 1;
         }
-        System.out.println("Avg Hops: " + (totalHops/(1.0 * TOTAL_PACKETS_TO_SEND)));
+        System.out.println("Avg Hops: " + (totalHops/(1.0 * totalSuccessfulPackets)));
         System.out.println("Avg Drops: " + (totalDrops/(1.0 *TOTAL_PACKETS_TO_SEND)));
 
     }

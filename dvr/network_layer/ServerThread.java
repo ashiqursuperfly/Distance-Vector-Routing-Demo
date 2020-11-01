@@ -15,7 +15,7 @@ class ServerThread implements Runnable {
     NetworkUtility networkUtility;
     EndDevice endDevice;
     Router defaultGateway;
-    ArrayList<Integer> latestPacketDeliveryRoute;
+    ArrayList<Router> latestPacketDeliveryRoute;
 
 
     ServerThread(NetworkUtility networkUtility, EndDevice endDevice) {
@@ -81,7 +81,6 @@ class ServerThread implements Runnable {
         System.out.println("Destination Router: " + destination.routerId + " " + destination.interfaceAddresses.get(0).getNetworkAddress());
 
         latestPacketDeliveryRoute.clear();
-        latestPacketDeliveryRoute.add(defaultGateway.routerId);
         PacketResultResponse result = forward(destination, defaultGateway, packet);
         result.path = latestPacketDeliveryRoute;
         /*System.out.println("Packet Result:");
@@ -133,7 +132,7 @@ class ServerThread implements Runnable {
             return new PacketResultResponse(false, "Stopped at router:" + nextHop.routerId  , packet);
         }
         else if (nextHop.routerId == destination.routerId) {
-            // latestPacketDeliveryRoute.add(nextHop.routerId);
+            latestPacketDeliveryRoute.add(nextHop);
             return new PacketResultResponse(true, "Packet Sent Successful", packet);
         }
 
@@ -141,7 +140,7 @@ class ServerThread implements Runnable {
 
         Router nextNextHop = KtUtils.INSTANCE.findRouter(nextHopRTE.getGatewayRouterId(), NetworkLayerServer.routers);
 
-        latestPacketDeliveryRoute.add(nextHopRTE.getGatewayRouterId());
+        latestPacketDeliveryRoute.add(nextHop);
 
         return forward(destination, nextNextHop, packet);
 
