@@ -27,10 +27,10 @@ public class Router {
 
         if (randomiseStates) {
             /* 80% Probability that the router is up */
-            Random random = new Random(System.currentTimeMillis());
+            Random random = new Random();
             double p = random.nextDouble();
-            if (p > Constants.initialDownRouterChance) state = false;
-            else state = true;
+            if (p > Constants.initialDownRouterChance) state = true;
+            else state = false;
             /*ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
             selected.add(7);
@@ -127,7 +127,37 @@ public class Router {
     }
 
     public boolean sfupdateRoutingTable(Router neighbor) {
-        return false;
+
+        boolean isSuccessful = false;
+
+        double thisRouterToNeighbourDistance = KtUtils.INSTANCE.searchRoutingTable(neighbor.routerId, routingTable).getDistance();
+
+        ArrayList<RoutingTableEntry> neighbourTable = neighbor.routingTable;
+
+        for (RoutingTableEntry entry: routingTable) {
+
+            // x-> this
+            // y-> other
+            // z-> neighbor
+
+            if (entry.getDestinationRouterId() == routerId) continue;
+
+            RoutingTableEntry neighbourToOther = KtUtils.INSTANCE.searchRoutingTable(entry.getDestinationRouterId(), neighbourTable);
+            double neighbourToOtherRouterDistance = (neighbourToOther != null) ? neighbourToOther.getDistance() : Constants.INFINITY;
+
+            double newDistance = thisRouterToNeighbourDistance + neighbourToOtherRouterDistance;
+
+            if ((newDistance < entry.getDistance() && this.routerId != neighbourToOther.getGatewayRouterId())) {
+                //System.out.println(entry.getDistance() + " > " + (thisRouterToNeighbourDistance + neighbourToOtherRouterDistance));
+                //TODO: do we need force update condition ? Why no convergence using it ? entry.getGatewayRouterId() == neighbor.routerId
+                entry.setDistance(thisRouterToNeighbourDistance + neighbourToOtherRouterDistance);
+                entry.setGatewayRouterId(neighbor.routerId);
+                isSuccessful = true;
+            }
+
+        }
+
+        return isSuccessful;
     }
 
     /**
