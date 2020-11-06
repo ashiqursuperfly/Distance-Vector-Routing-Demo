@@ -26,18 +26,17 @@ public class Router {
 
 
         if (randomiseStates) {
-            /* 80% Probability that the router is up */
-            /*Random random = new Random();
+            Random random = new Random();
             double p = random.nextDouble();
             if (p > Constants.initialDownRouterChance) state = true;
-            else state = false;*/
-            ArrayList<Integer> selected = new ArrayList<>();
+            else state = false;
+            /*ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
             selected.add(7);
             selected.add(11);
 
             if (selected.contains(routerId)) state = false;
-            else state = true;
+            else state = true;*/
         } else {
             state = true;
         }
