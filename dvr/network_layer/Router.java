@@ -27,17 +27,17 @@ public class Router {
 
         if (randomiseStates) {
             /* 80% Probability that the router is up */
-            Random random = new Random();
+            /*Random random = new Random();
             double p = random.nextDouble();
             if (p > Constants.initialDownRouterChance) state = true;
-            else state = false;
-            /*ArrayList<Integer> selected = new ArrayList<>();
+            else state = false;*/
+            ArrayList<Integer> selected = new ArrayList<>();
             selected.add(6);
             selected.add(7);
             selected.add(11);
 
             if (selected.contains(routerId)) state = false;
-            else state = true;*/
+            else state = true;
         } else {
             state = true;
         }
@@ -143,14 +143,21 @@ public class Router {
             if (entry.getDestinationRouterId() == routerId) continue;
 
             RoutingTableEntry neighbourToOther = KtUtils.INSTANCE.searchRoutingTable(entry.getDestinationRouterId(), neighbourTable);
-            double neighbourToOtherRouterDistance = (neighbourToOther != null) ? neighbourToOther.getDistance() : Constants.INFINITY;
+
+            if (neighbourToOther == null) continue;
+
+            double neighbourToOtherRouterDistance = neighbourToOther.getDistance();
 
             double newDistance = thisRouterToNeighbourDistance + neighbourToOtherRouterDistance;
 
-            if ((newDistance < entry.getDistance() && this.routerId != neighbourToOther.getGatewayRouterId())) {
+            if (entry.getGatewayRouterId() == neighbor.routerId) {
+                entry.setDistance(newDistance);
+                entry.setGatewayRouterId(neighbor.routerId);
+            }
+            else if (newDistance < entry.getDistance() && this.routerId != neighbourToOther.getGatewayRouterId()) {
                 //System.out.println(entry.getDistance() + " > " + (thisRouterToNeighbourDistance + neighbourToOtherRouterDistance));
-                //TODO: do we need force update condition ? Why no convergence using it ? entry.getGatewayRouterId() == neighbor.routerId
-                entry.setDistance(thisRouterToNeighbourDistance + neighbourToOtherRouterDistance);
+                //TODO: do we need force update condition ? Why no convergence using it ?
+                entry.setDistance(newDistance);
                 entry.setGatewayRouterId(neighbor.routerId);
                 isSuccessful = true;
             }

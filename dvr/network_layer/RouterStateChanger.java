@@ -49,7 +49,7 @@ class RouterStateChanger implements Runnable {
         float percentageUp = activeList.size() / ( 1.0f * NetworkLayerServer.routers.size());
 
         Router r;
-        if (percentageUp < 0.6) {
+        if (percentageUp < 0.7) {
             int id = random.nextInt(downList.size());
             r = downList.get(id);
         }

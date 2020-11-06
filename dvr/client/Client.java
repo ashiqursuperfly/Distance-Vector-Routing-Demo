@@ -84,7 +84,7 @@ public class Client {
                 System.out.println(packetResultResponse.getPath());
             }
 
-            KtUtils.INSTANCE.randomSleep(1000,3000);
+            KtUtils.INSTANCE.randomSleep(3000,7000);
 
 
         }

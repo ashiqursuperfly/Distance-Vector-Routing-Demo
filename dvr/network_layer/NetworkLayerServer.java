@@ -58,6 +58,7 @@ class NetworkLayerServer {
                 // ArrayList<RoutingTableEntry> T = r.routingTable
                 if (r.routerId == startingRouterId) continue;
                 isChanged |= updateSingleRouter(r, true);
+                // System.out.println(r.routerId + " : " + isChanged);
             }
             convergence = !isChanged;
         }

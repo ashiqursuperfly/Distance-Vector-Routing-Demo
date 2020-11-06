@@ -125,7 +125,7 @@ class ServerThread implements Runnable {
 
         RoutingTableEntry nextHopRTE = KtUtils.INSTANCE.searchRoutingTable(destination.routerId, nextHop.routingTable);
 
-        if (!nextHop.state || nextHopRTE.getGatewayRouterId() == -1 || (!Constants.DVR_MODE && latestPacketDeliveryRoute.size() > Constants.INFINITY)) {
+        if (!nextHop.state || nextHopRTE.getGatewayRouterId() == -1 || (latestPacketDeliveryRoute.size() > Constants.INFINITY)) {
             if (nextHopRTE != null) nextHopRTE.setDistance(Constants.INFINITY);
 
             NetworkLayerServer.applyDVR(nextHop.routerId);
