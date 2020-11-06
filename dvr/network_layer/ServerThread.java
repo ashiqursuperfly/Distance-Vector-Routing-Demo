@@ -140,11 +140,6 @@ class ServerThread implements Runnable {
 
         RoutingTableEntry prevToNext = KtUtils.INSTANCE.searchRoutingTable(nextHop.routerId, previous.routingTable);
         if (nextHop.routerId != previous.routerId && prevToNext.getDistance() >= Constants.INFINITY) {
-            try {
-                throw new Exception("3 ER B HOI MAMA !!!");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             prevToNext.setDistance(1);
         }
 

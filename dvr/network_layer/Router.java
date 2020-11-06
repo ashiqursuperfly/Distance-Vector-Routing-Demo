@@ -155,7 +155,6 @@ public class Router {
             }
             else if (newDistance < entry.getDistance() && this.routerId != neighbourToOther.getGatewayRouterId()) {
                 //System.out.println(entry.getDistance() + " > " + (thisRouterToNeighbourDistance + neighbourToOtherRouterDistance));
-                //TODO: do we need force update condition ? Why no convergence using it ?
                 entry.setDistance(newDistance);
                 entry.setGatewayRouterId(neighbor.routerId);
                 isSuccessful = true;
