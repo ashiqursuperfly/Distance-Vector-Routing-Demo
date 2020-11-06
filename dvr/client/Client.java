@@ -89,7 +89,7 @@ public class Client {
 
         }
 
-        printStats();
+        if (activeClients.size() > 3) printStats();
 
         while (true) {
 
